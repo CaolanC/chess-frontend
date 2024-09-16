@@ -76,7 +76,9 @@ declare enum ExtensionType {
     /** A type of extension that will be used to auto detect an environment */
     Environment = "environment",
     /** A type of extension for building and triangulating custom shapes used in graphics. */
-    ShapeBuilder = "shape-builder"
+    ShapeBuilder = "shape-builder",
+    /** A type of extension for creating custom batchers used in rendering. */
+    Batcher = "batcher"
 }
 /**
  * The metadata for an extension.

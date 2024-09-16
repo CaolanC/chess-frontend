@@ -41,16 +41,16 @@ class GpuGraphicsAdaptor {
     const renderer = graphicsPipe.renderer;
     const contextSystem = renderer.graphicsContext;
     const {
-      geometry,
+      batcher,
       instructions
     } = contextSystem.getContextRenderData(context);
     const encoder = renderer.encoder;
     encoder.setPipelineFromGeometryProgramAndState(
-      geometry,
+      batcher.geometry,
       shader.gpuProgram,
       graphicsPipe.state
     );
-    encoder.setGeometry(geometry, shader.gpuProgram);
+    encoder.setGeometry(batcher.geometry, shader.gpuProgram);
     const globalUniformsBindGroup = renderer.globalUniforms.bindGroup;
     encoder.setBindGroup(0, globalUniformsBindGroup, shader.gpuProgram);
     const localBindGroup = renderer.renderPipes.uniformBatch.getUniformBindGroup(shader.resources.localUniforms, true);

@@ -1,36 +1,41 @@
-import type { Batch, BatchableObject, Batcher } from '../../../rendering/batcher/shared/Batcher';
-import type { IndexBufferArray } from '../../../rendering/renderers/shared/geometry/Geometry';
+import { Matrix } from '../../../maths/matrix/Matrix';
+import type { Batch, Batcher } from '../../../rendering/batcher/shared/Batcher';
+import type { DefaultBatchableMeshElement } from '../../../rendering/batcher/shared/DefaultBatcher';
 import type { Texture } from '../../../rendering/renderers/shared/texture/Texture';
 import type { Graphics } from './Graphics';
 /**
  * A batchable graphics object.
  * @ignore
  */
-export declare class BatchableGraphics implements BatchableObject {
-    indexStart: number;
-    textureId: number;
+export declare class BatchableGraphics implements DefaultBatchableMeshElement {
+    readonly packAsQuad = false;
+    batcherName: string;
     texture: Texture;
-    location: number;
-    batcher: Batcher;
-    batch: Batch;
     renderable: Graphics;
     indexOffset: number;
     indexSize: number;
-    vertexOffset: number;
-    vertexSize: number;
-    color: number;
+    attributeOffset: number;
+    attributeSize: number;
+    baseColor: number;
     alpha: number;
     applyTransform: boolean;
     roundPixels: 0 | 1;
+    _indexStart: number;
+    _textureId: number;
+    _attributeStart: number;
+    _batcher: Batcher;
+    _batch: Batch;
     geometryData: {
         vertices: number[];
         uvs: number[];
         indices: number[];
     };
+    get uvs(): number[];
+    get positions(): number[];
+    get indices(): number[];
     get blendMode(): import("../../..").BLEND_MODES;
-    packIndex(indexBuffer: IndexBufferArray, index: number, indicesOffset: number): void;
-    packAttributes(float32View: Float32Array, uint32View: Uint32Array, index: number, textureId: number): void;
-    get vertSize(): number;
+    get color(): number;
+    get transform(): Matrix;
     copyTo(gpuBuffer: BatchableGraphics): void;
     reset(): void;
 }

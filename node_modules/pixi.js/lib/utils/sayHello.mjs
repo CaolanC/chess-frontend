@@ -1,8 +1,8 @@
 import { DOMAdapter } from '../environment/adapter.mjs';
+import { VERSION } from './const.mjs';
 
 "use strict";
 let saidHello = false;
-const VERSION = "8.3.4";
 function sayHello(type) {
   if (saidHello) {
     return;
@@ -26,5 +26,5 @@ function sayHello(type) {
   saidHello = true;
 }
 
-export { VERSION, sayHello };
+export { sayHello };
 //# sourceMappingURL=sayHello.mjs.map

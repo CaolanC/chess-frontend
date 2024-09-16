@@ -17,7 +17,7 @@ export declare class CanvasTextPipe implements RenderPipe<Text> {
     constructor(renderer: Renderer);
     resolutionChange(): void;
     validateRenderable(text: Text): boolean;
-    addRenderable(text: Text, _instructionSet: InstructionSet): void;
+    addRenderable(text: Text, instructionSet: InstructionSet): void;
     updateRenderable(text: Text): void;
     destroyRenderable(text: Text): void;
     private _destroyRenderableById;
@@ -25,7 +25,7 @@ export declare class CanvasTextPipe implements RenderPipe<Text> {
     private _updateGpuText;
     private _getGpuText;
     initGpuText(text: Text): {
-        texture: Texture;
+        texture: Texture<import("../../..").TextureSource<any>>;
         currentKey: string;
         batchableSprite: BatchableSprite;
     };

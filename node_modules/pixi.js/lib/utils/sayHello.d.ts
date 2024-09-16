@@ -1,4 +1,3 @@
-export declare const VERSION = "$_VERSION";
 /**
  * Prints out the version and renderer information for this running instance of PixiJS.
  * @param type - The name of the renderer this instance is using.

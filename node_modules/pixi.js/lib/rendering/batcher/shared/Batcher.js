@@ -42,17 +42,18 @@ const _Batcher = class _Batcher {
   constructor(options = {}) {
     /** unique id for this batcher */
     this.uid = uid.uid("batcher");
+    /** Indicates whether the batch data has been modified and needs updating. */
     this.dirty = true;
+    /** The current index of the batch being processed. */
     this.batchIndex = 0;
+    /** An array of all batches created during the current rendering process. */
     this.batches = [];
-    // specifics.
-    this._vertexSize = 6;
     this._elements = [];
     _Batcher.defaultOptions.maxTextures = _Batcher.defaultOptions.maxTextures ?? maxRecommendedTextures.getMaxTexturesPerBatch();
     options = { ..._Batcher.defaultOptions, ...options };
-    const { vertexSize, indexSize, maxTextures } = options;
-    this.attributeBuffer = new ViewableBuffer.ViewableBuffer(vertexSize * this._vertexSize * 4);
-    this.indexBuffer = new Uint16Array(indexSize);
+    const { maxTextures, attributesInitialSize, indicesInitialSize } = options;
+    this.attributeBuffer = new ViewableBuffer.ViewableBuffer(attributesInitialSize * 4);
+    this.indexBuffer = new Uint16Array(indicesInitialSize);
     this.maxTextures = maxTextures;
   }
   begin() {
@@ -70,28 +71,40 @@ const _Batcher = class _Batcher {
   }
   add(batchableObject) {
     this._elements[this.elementSize++] = batchableObject;
-    batchableObject.indexStart = this.indexSize;
-    batchableObject.location = this.attributeSize;
-    batchableObject.batcher = this;
+    batchableObject._indexStart = this.indexSize;
+    batchableObject._attributeStart = this.attributeSize;
+    batchableObject._batcher = this;
     this.indexSize += batchableObject.indexSize;
-    this.attributeSize += batchableObject.vertexSize * this._vertexSize;
+    this.attributeSize += batchableObject.attributeSize * this.vertexSize;
   }
   checkAndUpdateTexture(batchableObject, texture) {
-    const textureId = batchableObject.batch.textures.ids[texture._source.uid];
+    const textureId = batchableObject._batch.textures.ids[texture._source.uid];
     if (!textureId && textureId !== 0)
       return false;
-    batchableObject.textureId = textureId;
+    batchableObject._textureId = textureId;
     batchableObject.texture = texture;
     return true;
   }
   updateElement(batchableObject) {
     this.dirty = true;
-    batchableObject.packAttributes(
-      this.attributeBuffer.float32View,
-      this.attributeBuffer.uint32View,
-      batchableObject.location,
-      batchableObject.textureId
-    );
+    const attributeBuffer = this.attributeBuffer;
+    if (batchableObject.packAsQuad) {
+      this.packQuadAttributes(
+        batchableObject,
+        attributeBuffer.float32View,
+        attributeBuffer.uint32View,
+        batchableObject._attributeStart,
+        batchableObject._textureId
+      );
+    } else {
+      this.packAttributes(
+        batchableObject,
+        attributeBuffer.float32View,
+        attributeBuffer.uint32View,
+        batchableObject._attributeStart,
+        batchableObject._textureId
+      );
+    }
   }
   /**
    * breaks the batcher. This happens when a batch gets too big,
@@ -115,7 +128,7 @@ const _Batcher = class _Batcher {
     }
     const f32 = this.attributeBuffer.float32View;
     const u32 = this.attributeBuffer.uint32View;
-    const iBuffer = this.indexBuffer;
+    const indexBuffer = this.indexBuffer;
     let size = this._batchIndexSize;
     let start = this._batchIndexStart;
     let action = "startBatch";
@@ -126,17 +139,43 @@ const _Batcher = class _Batcher {
       const texture = element.texture;
       const source = texture._source;
       const adjustedBlendMode = getAdjustedBlendModeBlend.getAdjustedBlendModeBlend(element.blendMode, source);
-      const blendModeChange = blendMode !== adjustedBlendMode;
-      if (source._batchTick === BATCH_TICK && !blendModeChange) {
-        element.textureId = source._textureBindLocation;
+      const breakRequired = blendMode !== adjustedBlendMode;
+      if (source._batchTick === BATCH_TICK && !breakRequired) {
+        element._textureId = source._textureBindLocation;
         size += element.indexSize;
-        element.packAttributes(f32, u32, element.location, element.textureId);
-        element.packIndex(iBuffer, element.indexStart, element.location / this._vertexSize);
-        element.batch = batch;
+        if (element.packAsQuad) {
+          this.packQuadAttributes(
+            element,
+            f32,
+            u32,
+            element._attributeStart,
+            element._textureId
+          );
+          this.packQuadIndex(
+            indexBuffer,
+            element._indexStart,
+            element._attributeStart / this.vertexSize
+          );
+        } else {
+          this.packAttributes(
+            element,
+            f32,
+            u32,
+            element._attributeStart,
+            element._textureId
+          );
+          this.packIndex(
+            element,
+            indexBuffer,
+            element._indexStart,
+            element._attributeStart / this.vertexSize
+          );
+        }
+        element._batch = batch;
         continue;
       }
       source._batchTick = BATCH_TICK;
-      if (textureBatch.count >= maxTextures || blendModeChange) {
+      if (textureBatch.count >= maxTextures || breakRequired) {
         this._finishBatch(
           batch,
           start,
@@ -154,13 +193,39 @@ const _Batcher = class _Batcher {
         textureBatch.clear();
         ++BATCH_TICK;
       }
-      element.textureId = source._textureBindLocation = textureBatch.count;
+      element._textureId = source._textureBindLocation = textureBatch.count;
       textureBatch.ids[source.uid] = textureBatch.count;
       textureBatch.textures[textureBatch.count++] = source;
-      element.batch = batch;
+      element._batch = batch;
       size += element.indexSize;
-      element.packAttributes(f32, u32, element.location, element.textureId);
-      element.packIndex(iBuffer, element.indexStart, element.location / this._vertexSize);
+      if (element.packAsQuad) {
+        this.packQuadAttributes(
+          element,
+          f32,
+          u32,
+          element._attributeStart,
+          element._textureId
+        );
+        this.packQuadIndex(
+          indexBuffer,
+          element._indexStart,
+          element._attributeStart / this.vertexSize
+        );
+      } else {
+        this.packAttributes(
+          element,
+          f32,
+          u32,
+          element._attributeStart,
+          element._textureId
+        );
+        this.packIndex(
+          element,
+          indexBuffer,
+          element._indexStart,
+          element._attributeStart / this.vertexSize
+        );
+      }
     }
     if (textureBatch.count > 0) {
       this._finishBatch(
@@ -233,13 +298,30 @@ const _Batcher = class _Batcher {
     }
     this.indexBuffer = newIndexBuffer;
   }
+  packQuadIndex(indexBuffer, index, indicesOffset) {
+    indexBuffer[index] = indicesOffset + 0;
+    indexBuffer[index + 1] = indicesOffset + 1;
+    indexBuffer[index + 2] = indicesOffset + 2;
+    indexBuffer[index + 3] = indicesOffset + 0;
+    indexBuffer[index + 4] = indicesOffset + 2;
+    indexBuffer[index + 5] = indicesOffset + 3;
+  }
+  packIndex(element, indexBuffer, index, indicesOffset) {
+    const indices = element.indices;
+    const size = element.indexSize;
+    const indexOffset = element.indexOffset;
+    const attributeOffset = element.attributeOffset;
+    for (let i = 0; i < size; i++) {
+      indexBuffer[index++] = indicesOffset + indices[i + indexOffset] - attributeOffset;
+    }
+  }
   destroy() {
     for (let i = 0; i < this.batches.length; i++) {
       returnBatchToPool(this.batches[i]);
     }
     this.batches = null;
     for (let i = 0; i < this._elements.length; i++) {
-      this._elements[i].batch = null;
+      this._elements[i]._batch = null;
     }
     this._elements = null;
     this.indexBuffer = null;
@@ -248,9 +330,9 @@ const _Batcher = class _Batcher {
   }
 };
 _Batcher.defaultOptions = {
-  vertexSize: 4,
-  indexSize: 6,
-  maxTextures: null
+  maxTextures: null,
+  attributesInitialSize: 4,
+  indicesInitialSize: 6
 };
 let Batcher = _Batcher;
 

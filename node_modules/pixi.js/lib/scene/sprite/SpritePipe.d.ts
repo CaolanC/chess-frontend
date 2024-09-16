@@ -13,7 +13,7 @@ export declare class SpritePipe implements RenderPipe<Sprite> {
     private _gpuSpriteHash;
     private readonly _destroyRenderableBound;
     constructor(renderer: Renderer);
-    addRenderable(sprite: Sprite, _instructionSet: InstructionSet): void;
+    addRenderable(sprite: Sprite, instructionSet: InstructionSet): void;
     updateRenderable(sprite: Sprite): void;
     validateRenderable(sprite: Sprite): boolean;
     destroyRenderable(sprite: Sprite): void;

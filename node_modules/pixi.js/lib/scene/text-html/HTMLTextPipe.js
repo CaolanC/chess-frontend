@@ -17,6 +17,8 @@ class HTMLTextPipe {
   resolutionChange() {
     for (const i in this._gpuText) {
       const gpuText = this._gpuText[i];
+      if (!gpuText)
+        continue;
       const text = gpuText.batchableSprite.renderable;
       if (text._autoResolution) {
         text._resolution = this._renderer.resolution;
@@ -36,13 +38,13 @@ class HTMLTextPipe {
     }
     return false;
   }
-  addRenderable(htmlText, _instructionSet) {
+  addRenderable(htmlText, instructionSet) {
     const gpuText = this._getGpuText(htmlText);
     const batchableSprite = gpuText.batchableSprite;
     if (htmlText._didTextUpdate) {
       this._updateText(htmlText);
     }
-    this._renderer.renderPipes.batch.addToBatch(batchableSprite);
+    this._renderer.renderPipes.batch.addToBatch(batchableSprite, instructionSet);
   }
   updateRenderable(htmlText) {
     const gpuText = this._getGpuText(htmlText);
@@ -50,7 +52,7 @@ class HTMLTextPipe {
     if (htmlText._didTextUpdate) {
       this._updateText(htmlText);
     }
-    batchableSprite.batcher.updateElement(batchableSprite);
+    batchableSprite._batcher.updateElement(batchableSprite);
   }
   destroyRenderable(htmlText) {
     htmlText.off("destroyed", this._destroyRenderableBound);
@@ -112,6 +114,7 @@ class HTMLTextPipe {
     };
     const batchableSprite = gpuTextData.batchableSprite;
     batchableSprite.renderable = htmlText;
+    batchableSprite.transform = htmlText.groupTransform;
     batchableSprite.texture = Texture.Texture.EMPTY;
     batchableSprite.bounds = { minX: 0, maxX: 1, minY: 0, maxY: 0 };
     batchableSprite.roundPixels = this._renderer._roundPixels | htmlText._roundPixels;

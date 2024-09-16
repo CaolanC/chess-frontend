@@ -45,10 +45,10 @@ export declare class CanvasTextSystem implements System {
         style: TextStyle;
         resolution?: number;
     }): {
-        texture: Texture;
+        texture: Texture<import("../../..").TextureSource<any>>;
         canvasAndContext: import("../../../rendering/renderers/shared/texture/CanvasPool").CanvasAndContext;
     };
-    getManagedTexture(text: Text): Texture;
+    getManagedTexture(text: Text): Texture<import("../../..").TextureSource<any>>;
     private _increaseReferenceCount;
     decreaseReferenceCount(textKey: string): void;
     getReferenceCount(textKey: string): number;

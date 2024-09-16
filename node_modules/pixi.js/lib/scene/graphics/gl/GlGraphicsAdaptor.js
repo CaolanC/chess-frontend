@@ -44,13 +44,13 @@ class GlGraphicsAdaptor {
     const renderer = graphicsPipe.renderer;
     const contextSystem = renderer.graphicsContext;
     const {
-      geometry,
+      batcher,
       instructions
     } = contextSystem.getContextRenderData(context);
     shader.groups[0] = renderer.globalUniforms.bindGroup;
     renderer.state.set(graphicsPipe.state);
     renderer.shader.bind(shader);
-    renderer.geometry.bind(geometry, shader.glProgram);
+    renderer.geometry.bind(batcher.geometry, shader.glProgram);
     const batches = instructions.instructions;
     for (let i = 0; i < instructions.instructionSize; i++) {
       const batch = batches[i];

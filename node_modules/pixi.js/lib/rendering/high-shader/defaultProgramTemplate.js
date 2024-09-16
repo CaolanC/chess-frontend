@@ -68,7 +68,11 @@ const fragmentGPUTemplate = (
       
         {{main}}
         
-        return outColor * vColor;
+        var finalColor:vec4<f32> = outColor * vColor;
+
+        {{end}}
+
+        return finalColor;
       };
 `
 );
@@ -132,6 +136,8 @@ const fragmentGlTemplate = (
         {{main}}
         
         finalColor = outColor * vColor;
+        
+        {{end}}
     }
 `
 );

@@ -45,7 +45,7 @@ class MeshPipe {
       const texture = mesh.texture;
       if (batchableMesh.texture._source !== texture._source) {
         if (batchableMesh.texture._source !== texture._source) {
-          return !batchableMesh.batcher.checkAndUpdateTexture(batchableMesh, texture);
+          return !batchableMesh._batcher.checkAndUpdateTexture(batchableMesh, texture);
         }
       }
     }
@@ -58,7 +58,7 @@ class MeshPipe {
       const gpuBatchableMesh = this._getBatchableMesh(mesh);
       gpuBatchableMesh.texture = mesh._texture;
       gpuBatchableMesh.geometry = mesh._geometry;
-      batcher.addToBatch(gpuBatchableMesh);
+      batcher.addToBatch(gpuBatchableMesh, instructionSet);
     } else {
       batcher.break(instructionSet);
       instructionSet.add(mesh);
@@ -69,7 +69,7 @@ class MeshPipe {
       const gpuBatchableMesh = this._gpuBatchableMeshHash[mesh.uid];
       gpuBatchableMesh.texture = mesh._texture;
       gpuBatchableMesh.geometry = mesh._geometry;
-      gpuBatchableMesh.batcher.updateElement(gpuBatchableMesh);
+      gpuBatchableMesh._batcher.updateElement(gpuBatchableMesh);
     }
   }
   destroyRenderable(mesh) {
@@ -113,11 +113,11 @@ class MeshPipe {
   }
   _initBatchableMesh(mesh) {
     const gpuMesh = PoolGroup.BigPool.get(BatchableMesh.BatchableMesh);
-    gpuMesh.mesh = mesh;
+    gpuMesh.renderable = mesh;
     gpuMesh.texture = mesh._texture;
+    gpuMesh.transform = mesh.groupTransform;
     gpuMesh.roundPixels = this.renderer._roundPixels | mesh._roundPixels;
     this._gpuBatchableMeshHash[mesh.uid] = gpuMesh;
-    gpuMesh.mesh = mesh;
     return gpuMesh;
   }
   destroy() {

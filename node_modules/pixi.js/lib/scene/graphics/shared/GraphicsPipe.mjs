@@ -31,7 +31,7 @@ class GraphicsPipe {
       this._rebuild(graphics);
     }
     if (gpuContext.isBatchable) {
-      this._addToBatcher(graphics);
+      this._addToBatcher(graphics, instructionSet);
     } else {
       this.renderer.renderPipes.batch.break(instructionSet);
       instructionSet.add(graphics);
@@ -42,7 +42,7 @@ class GraphicsPipe {
     if (batches) {
       for (let i = 0; i < batches.length; i++) {
         const batch = batches[i];
-        batch.batcher.updateElement(batch);
+        batch._batcher.updateElement(batch);
       }
     }
   }
@@ -84,12 +84,12 @@ class GraphicsPipe {
     }
     graphics.batched = gpuContext.isBatchable;
   }
-  _addToBatcher(graphics) {
+  _addToBatcher(graphics, instructionSet) {
     const batchPipe = this.renderer.renderPipes.batch;
     const batches = this._getBatchesForRenderable(graphics);
     for (let i = 0; i < batches.length; i++) {
       const batch = batches[i];
-      batchPipe.addToBatch(batch);
+      batchPipe.addToBatch(batch, instructionSet);
     }
   }
   _getBatchesForRenderable(graphics) {

@@ -3,8 +3,8 @@ import type { Application } from '../../app/Application';
 import type { System } from '../../rendering/renderers/shared/system/System';
 import type { Renderer } from '../../rendering/renderers/types';
 declare global {
-    var __PIXI_APP_INIT__: undefined | ((arg: Application | Renderer) => void);
-    var __PIXI_RENDERER_INIT__: undefined | ((arg: Application | Renderer) => void);
+    var __PIXI_APP_INIT__: undefined | ((arg: Application | Renderer, version: string) => void);
+    var __PIXI_RENDERER_INIT__: undefined | ((arg: Application | Renderer, version: string) => void);
 }
 /**
  * Calls global __PIXI_APP_INIT__ hook with the application instance, after the application is initialized.

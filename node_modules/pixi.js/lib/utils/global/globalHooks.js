@@ -1,11 +1,12 @@
 'use strict';
 
 var Extensions = require('../../extensions/Extensions.js');
+var _const = require('../const.js');
 
 "use strict";
 class ApplicationInitHook {
   static init() {
-    globalThis.__PIXI_APP_INIT__?.(this);
+    globalThis.__PIXI_APP_INIT__?.(this, _const.VERSION);
   }
   static destroy() {
   }
@@ -17,7 +18,7 @@ class RendererInitHook {
     this._renderer = renderer;
   }
   init() {
-    globalThis.__PIXI_RENDERER_INIT__?.(this._renderer);
+    globalThis.__PIXI_RENDERER_INIT__?.(this._renderer, _const.VERSION);
   }
   destroy() {
     this._renderer = null;

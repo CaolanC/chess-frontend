@@ -1,4 +1,5 @@
 /// <reference types="@webgpu/types" />
+import { TextureSource } from '../../shared/texture/sources/TextureSource';
 import { GpuRenderTarget } from './GpuRenderTarget';
 import type { RgbaArray } from '../../../../color/Color';
 import type { Rectangle } from '../../../../maths/shapes/Rectangle';
@@ -26,7 +27,7 @@ export declare class GpuRenderTargetAdaptor implements RenderTargetAdaptor<GpuRe
     }, originDest: {
         x: number;
         y: number;
-    }): Texture;
+    }): Texture<TextureSource<any>>;
     startRenderPass(renderTarget: RenderTarget, clear?: CLEAR_OR_BOOL, clearColor?: RgbaArray, viewport?: Rectangle): void;
     finishRenderPass(): void;
     /**

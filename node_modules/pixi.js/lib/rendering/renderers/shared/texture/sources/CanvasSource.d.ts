@@ -13,8 +13,15 @@ export declare class CanvasSource extends TextureSource<ICanvas> {
     uploadMethodId: string;
     autoDensity: boolean;
     transparent: boolean;
+    private _context2D;
     constructor(options: CanvasSourceOptions);
     resizeCanvas(): void;
     resize(width?: number, height?: number, resolution?: number): boolean;
     static test(resource: any): resource is ICanvas;
+    /**
+     * Returns the 2D rendering context for the canvas.
+     * Caches the context after creating it.
+     * @returns The 2D rendering context of the canvas.
+     */
+    get context2D(): CanvasRenderingContext2D;
 }

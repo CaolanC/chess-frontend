@@ -1,5 +1,6 @@
 import { ExtensionType } from '../../../extensions/Extensions';
 import type { Geometry } from '../../renderers/shared/geometry/Geometry';
+import type { Shader } from '../../renderers/shared/shader/Shader';
 import type { Batch } from '../shared/Batcher';
 import type { BatcherAdaptor, BatcherPipe } from '../shared/BatcherPipe';
 /**
@@ -13,12 +14,10 @@ export declare class GlBatchAdaptor implements BatcherAdaptor {
         readonly type: readonly [ExtensionType.WebGLPipesAdaptor];
         readonly name: "batch";
     };
-    private _shader;
     private _didUpload;
     private readonly _tempState;
     init(batcherPipe: BatcherPipe): void;
     contextChange(): void;
-    start(batchPipe: BatcherPipe, geometry: Geometry): void;
+    start(batchPipe: BatcherPipe, geometry: Geometry, shader: Shader): void;
     execute(batchPipe: BatcherPipe, batch: Batch): void;
-    destroy(): void;
 }

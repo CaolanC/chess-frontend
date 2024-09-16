@@ -1,5 +1,6 @@
 import { ExtensionType } from '../../../../extensions/Extensions';
 import { type GpuPowerPreference } from '../../types';
+import type { ICanvas } from '../../../../environment/canvas/ICanvas';
 import type { System } from '../../shared/system/System';
 import type { WebGLRenderer } from '../WebGLRenderer';
 import type { WebGLExtensions } from './WebGLExtensions';
@@ -55,6 +56,13 @@ export interface ContextSystemOptions {
      * @memberof rendering.SharedRendererOptions
      */
     preferWebGLVersion?: 1 | 2;
+    /**
+     * Whether to enable multi-view rendering. Set to true when rendering to multiple
+     * canvases on the dom.
+     * @default false
+     * @memberof rendering.SharedRendererOptions
+     */
+    multiView: boolean;
 }
 /**
  * System plugin to the renderer to manage the context
@@ -104,6 +112,19 @@ export declare class GlContextSystem implements System<ContextSystemOptions> {
      */
     extensions: WebGLExtensions;
     webGLVersion: 1 | 2;
+    /**
+     * Whether to enable multi-view rendering. Set to true when rendering to multiple
+     * canvases on the dom.
+     * @default false
+     */
+    multiView: boolean;
+    /**
+     * The canvas that the WebGL Context is rendering to.
+     * This will be the view canvas. But if multiView is enabled, this canvas will not be attached to the DOM.
+     * It will be rendered to and then copied to the target canvas.
+     * @readonly
+     */
+    canvas: ICanvas;
     private _renderer;
     private _contextLossForced;
     /** @param renderer - The renderer this System works for. */
@@ -119,6 +140,7 @@ export declare class GlContextSystem implements System<ContextSystemOptions> {
      */
     protected contextChange(gl: WebGL2RenderingContext): void;
     init(options: ContextSystemOptions): void;
+    ensureCanvasSize(targetCanvas: ICanvas): void;
     /**
      * Initializes the context.
      * @protected

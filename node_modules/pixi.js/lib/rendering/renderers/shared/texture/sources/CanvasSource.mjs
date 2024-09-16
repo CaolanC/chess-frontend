@@ -49,6 +49,14 @@ class CanvasSource extends TextureSource {
   static test(resource) {
     return globalThis.HTMLCanvasElement && resource instanceof HTMLCanvasElement || globalThis.OffscreenCanvas && resource instanceof OffscreenCanvas;
   }
+  /**
+   * Returns the 2D rendering context for the canvas.
+   * Caches the context after creating it.
+   * @returns The 2D rendering context of the canvas.
+   */
+  get context2D() {
+    return this._context2D || (this._context2D = this.resource.getContext("2d"));
+  }
 }
 CanvasSource.extension = ExtensionType.TextureSource;
 

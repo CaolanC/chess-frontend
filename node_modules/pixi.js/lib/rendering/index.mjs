@@ -9,6 +9,8 @@ export { Batch, Batcher } from './batcher/shared/Batcher.mjs';
 export { BatcherPipe } from './batcher/shared/BatcherPipe.mjs';
 export { BatchGeometry } from './batcher/shared/BatchGeometry.mjs';
 export { BatchTextureArray } from './batcher/shared/BatchTextureArray.mjs';
+export { DefaultBatcher } from './batcher/shared/DefaultBatcher.mjs';
+export { DefaultShader } from './batcher/shared/DefaultShader.mjs';
 export { compileHighShaderGlProgram, compileHighShaderGpuProgram } from './high-shader/compileHighShaderToProgram.mjs';
 export { compileHighShader, compileHighShaderGl } from './high-shader/compiler/compileHighShader.mjs';
 import './high-shader/compiler/types.mjs';

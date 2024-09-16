@@ -1,5 +1,6 @@
 import EventEmitter from 'eventemitter3';
 import { Rectangle } from '../../../../maths/shapes/Rectangle';
+import { BufferImageSource } from './sources/BufferImageSource';
 import { TextureSource } from './sources/TextureSource';
 import { TextureMatrix } from './TextureMatrix';
 import type { TextureResourceOrOptions } from './utils/textureFrom';
@@ -35,9 +36,9 @@ export type UVs = {
  * The options that can be passed to a new Texture
  * @memberof rendering
  */
-export interface TextureOptions {
+export interface TextureOptions<TextureSourceType extends TextureSource = TextureSource> {
     /** the underlying texture data that this texture will use  */
-    source?: TextureSource;
+    source?: TextureSourceType;
     /** optional label, for debugging */
     label?: string;
     /** The rectangle frame of the texture to show */
@@ -73,7 +74,7 @@ export type TextureSourceLike = TextureSource | TextureResourceOrOptions | strin
  *
  * ```js
  *
- * const texture = await Asset.load('assets/image.png');
+ * const texture = await Assets.load('assets/image.png');
  *
  * // once Assets has loaded the image it will be available via the from method
  * const sameTexture = Texture.from('assets/image.png');
@@ -92,7 +93,7 @@ export type TextureSourceLike = TextureSource | TextureResourceOrOptions | strin
  * ```js
  * import { Sprite, Texture } from 'pixi.js';
  *
- * const texture = await Asset.load('assets/image.png');
+ * const texture = await Assets.load('assets/image.png');
  * const sprite1 = new Sprite(texture);
  * const sprite2 = new Sprite(texture);
  * ```
@@ -102,7 +103,7 @@ export type TextureSourceLike = TextureSource | TextureResourceOrOptions | strin
  * @memberof rendering
  * @class
  */
-export declare class Texture extends EventEmitter<{
+export declare class Texture<TextureSourceType extends TextureSource = TextureSource> extends EventEmitter<{
     update: Texture;
     destroy: Texture;
 }> implements BindableTexture {
@@ -123,7 +124,7 @@ export declare class Texture extends EventEmitter<{
      * @readonly
      */
     destroyed: boolean;
-    _source: TextureSource;
+    _source: TextureSourceType;
     /**
      * Indicates whether the texture is rotated inside the atlas
      * set to 2 to compensate for texture packer rotation
@@ -186,10 +187,10 @@ export declare class Texture extends EventEmitter<{
     /**
      * @param {rendering.TextureOptions} options - Options for the texture
      */
-    constructor({ source, label, frame, orig, trim, defaultAnchor, defaultBorders, rotate, dynamic }?: TextureOptions);
-    set source(value: TextureSource);
+    constructor({ source, label, frame, orig, trim, defaultAnchor, defaultBorders, rotate, dynamic }?: TextureOptions<TextureSourceType>);
+    set source(value: TextureSourceType);
     /** the underlying source of the texture (equivalent of baseTexture in v7) */
-    get source(): TextureSource;
+    get source(): TextureSourceType;
     /** returns a TextureMatrix instance for this texture. By default, that object is not created because its heavy. */
     get textureMatrix(): TextureMatrix;
     /** The width of the Texture in pixels. */
@@ -210,5 +211,5 @@ export declare class Texture extends EventEmitter<{
     /** an Empty Texture used internally by the engine */
     static EMPTY: Texture;
     /** a White texture used internally by the engine */
-    static WHITE: Texture;
+    static WHITE: Texture<BufferImageSource>;
 }

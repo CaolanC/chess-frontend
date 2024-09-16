@@ -17,7 +17,7 @@ export declare class HTMLTextPipe implements RenderPipe<HTMLText> {
     constructor(renderer: Renderer);
     resolutionChange(): void;
     validateRenderable(htmlText: HTMLText): boolean;
-    addRenderable(htmlText: HTMLText, _instructionSet: InstructionSet): void;
+    addRenderable(htmlText: HTMLText, instructionSet: InstructionSet): void;
     updateRenderable(htmlText: HTMLText): void;
     destroyRenderable(htmlText: HTMLText): void;
     private _destroyRenderableById;
@@ -27,7 +27,7 @@ export declare class HTMLTextPipe implements RenderPipe<HTMLText> {
     initGpuText(htmlText: HTMLText): {
         textureNeedsUploading: boolean;
         generatingTexture: boolean;
-        texture: Texture;
+        texture: Texture<import("../..").TextureSource<any>>;
         currentKey: string;
         batchableSprite: BatchableSprite;
     };

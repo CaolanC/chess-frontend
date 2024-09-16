@@ -14,6 +14,8 @@ class CanvasTextPipe {
   resolutionChange() {
     for (const i in this._gpuText) {
       const gpuText = this._gpuText[i];
+      if (!gpuText)
+        continue;
       const text = gpuText.batchableSprite.renderable;
       if (text._autoResolution) {
         text._resolution = this._renderer.resolution;
@@ -40,13 +42,13 @@ class CanvasTextPipe {
     }
     return false;
   }
-  addRenderable(text, _instructionSet) {
+  addRenderable(text, instructionSet) {
     const gpuText = this._getGpuText(text);
     const batchableSprite = gpuText.batchableSprite;
     if (text._didTextUpdate) {
       this._updateText(text);
     }
-    this._renderer.renderPipes.batch.addToBatch(batchableSprite);
+    this._renderer.renderPipes.batch.addToBatch(batchableSprite, instructionSet);
   }
   updateRenderable(text) {
     const gpuText = this._getGpuText(text);
@@ -54,7 +56,7 @@ class CanvasTextPipe {
     if (text._didTextUpdate) {
       this._updateText(text);
     }
-    batchableSprite.batcher.updateElement(batchableSprite);
+    batchableSprite._batcher.updateElement(batchableSprite);
   }
   destroyRenderable(text) {
     text.off("destroyed", this._destroyRenderableBound);
@@ -97,6 +99,7 @@ class CanvasTextPipe {
       batchableSprite: BigPool.get(BatchableSprite)
     };
     gpuTextData.batchableSprite.renderable = text;
+    gpuTextData.batchableSprite.transform = text.groupTransform;
     gpuTextData.batchableSprite.bounds = { minX: 0, maxX: 1, minY: 0, maxY: 0 };
     gpuTextData.batchableSprite.roundPixels = this._renderer._roundPixels | text._roundPixels;
     this._gpuText[text.uid] = gpuTextData;

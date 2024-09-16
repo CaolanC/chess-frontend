@@ -51,6 +51,16 @@ const _GlContextSystem = class _GlContextSystem {
   }
   init(options) {
     options = { ..._GlContextSystem.defaultOptions, ...options };
+    let multiView = this.multiView = options.multiView;
+    if (options.context && multiView) {
+      warn.warn("Renderer created with both a context and multiview enabled. Disabling multiView as both cannot work together.");
+      multiView = false;
+    }
+    if (multiView) {
+      this.canvas = adapter.DOMAdapter.get().createCanvas(this._renderer.canvas.width, this._renderer.canvas.height);
+    } else {
+      this.canvas = this._renderer.view.canvas;
+    }
     if (options.context) {
       this.initFromContext(options.context);
     } else {
@@ -65,6 +75,19 @@ const _GlContextSystem = class _GlContextSystem {
         preserveDrawingBuffer: options.preserveDrawingBuffer,
         powerPreference: options.powerPreference ?? "default"
       });
+    }
+  }
+  ensureCanvasSize(targetCanvas) {
+    if (!this.multiView) {
+      if (targetCanvas !== this.canvas) {
+        warn.warn("multiView is disabled, but targetCanvas is not the main canvas");
+      }
+      return;
+    }
+    const { canvas } = this;
+    if (canvas.width < targetCanvas.width || canvas.height < targetCanvas.height) {
+      canvas.width = Math.max(targetCanvas.width, targetCanvas.width);
+      canvas.height = Math.max(targetCanvas.height, targetCanvas.height);
     }
   }
   /**
@@ -91,7 +114,7 @@ const _GlContextSystem = class _GlContextSystem {
    */
   createContext(preferWebGLVersion, options) {
     let gl;
-    const canvas = this._renderer.view.canvas;
+    const canvas = this.canvas;
     if (preferWebGLVersion === 2) {
       gl = canvas.getContext("webgl2", options);
     }
@@ -243,7 +266,12 @@ _GlContextSystem.defaultOptions = {
    * {@link WebGLOptions.webGLVersion}
    * @default 2
    */
-  preferWebGLVersion: 2
+  preferWebGLVersion: 2,
+  /**
+   * {@link WebGLOptions.multiView}
+   * @default false
+   */
+  multiView: false
 };
 let GlContextSystem = _GlContextSystem;
 

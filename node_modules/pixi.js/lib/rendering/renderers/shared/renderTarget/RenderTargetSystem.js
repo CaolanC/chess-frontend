@@ -72,6 +72,9 @@ class RenderTargetSystem {
     this.rootRenderTarget = this.renderTarget;
     this.renderingToScreen = isRenderingToScreen.isRenderingToScreen(this.rootRenderTarget);
   }
+  postrender() {
+    this.adaptor.postrender?.(this.rootRenderTarget);
+  }
   /**
    * Binding a render surface! This is the main function of the render target system.
    * It will take the RenderSurface (which can be a texture, canvas, or render target) and bind it to the renderer.

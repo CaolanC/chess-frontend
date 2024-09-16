@@ -1,12 +1,5 @@
 import { ExtensionType } from '../../../extensions/Extensions.mjs';
-import { compileHighShaderGlProgram } from '../../high-shader/compileHighShaderToProgram.mjs';
-import { colorBitGl } from '../../high-shader/shader-bits/colorBit.mjs';
-import { generateTextureBatchBitGl } from '../../high-shader/shader-bits/generateTextureBatchBit.mjs';
-import { roundPixelsBitGl } from '../../high-shader/shader-bits/roundPixelsBit.mjs';
-import { getBatchSamplersUniformGroup } from '../../renderers/gl/shader/getBatchSamplersUniformGroup.mjs';
-import { Shader } from '../../renderers/shared/shader/Shader.mjs';
 import { State } from '../../renderers/shared/state/State.mjs';
-import { getMaxTexturesPerBatch } from './utils/maxRecommendedTextures.mjs';
 
 "use strict";
 class GlBatchAdaptor {
@@ -15,31 +8,16 @@ class GlBatchAdaptor {
     this._tempState = State.for2d();
   }
   init(batcherPipe) {
-    const maxTextures = getMaxTexturesPerBatch();
-    const glProgram = compileHighShaderGlProgram({
-      name: "batch",
-      bits: [
-        colorBitGl,
-        generateTextureBatchBitGl(maxTextures),
-        roundPixelsBitGl
-      ]
-    });
-    this._shader = new Shader({
-      glProgram,
-      resources: {
-        batchSamplers: getBatchSamplersUniformGroup(maxTextures)
-      }
-    });
     batcherPipe.renderer.runners.contextChange.add(this);
   }
   contextChange() {
     this._didUpload = false;
   }
-  start(batchPipe, geometry) {
+  start(batchPipe, geometry, shader) {
     const renderer = batchPipe.renderer;
-    renderer.shader.bind(this._shader, this._didUpload);
+    renderer.shader.bind(shader, this._didUpload);
     renderer.shader.updateUniformGroup(renderer.globalUniforms.uniformGroup);
-    renderer.geometry.bind(geometry, this._shader.glProgram);
+    renderer.geometry.bind(geometry, shader.glProgram);
   }
   execute(batchPipe, batch) {
     const renderer = batchPipe.renderer;
@@ -51,10 +29,6 @@ class GlBatchAdaptor {
       renderer.texture.bind(textures[i], i);
     }
     renderer.geometry.draw("triangle-list", batch.size, batch.start);
-  }
-  destroy() {
-    this._shader.destroy(true);
-    this._shader = null;
   }
 }
 /** @ignore */

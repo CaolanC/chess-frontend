@@ -1,17 +1,17 @@
 'use strict';
 
 var adapter = require('../environment/adapter.js');
+var _const = require('./const.js');
 
 "use strict";
 let saidHello = false;
-const VERSION = "8.3.4";
 function sayHello(type) {
   if (saidHello) {
     return;
   }
   if (adapter.DOMAdapter.get().getNavigator().userAgent.toLowerCase().indexOf("chrome") > -1) {
     const args = [
-      `%c  %c  %c  %c  %c PixiJS %c v${VERSION} (${type}) http://www.pixijs.com/
+      `%c  %c  %c  %c  %c PixiJS %c v${_const.VERSION} (${type}) http://www.pixijs.com/
 
 `,
       "background: #E72264; padding:5px 0;",
@@ -23,11 +23,10 @@ function sayHello(type) {
     ];
     globalThis.console.log(...args);
   } else if (globalThis.console) {
-    globalThis.console.log(`PixiJS ${VERSION} - ${type} - http://www.pixijs.com/`);
+    globalThis.console.log(`PixiJS ${_const.VERSION} - ${type} - http://www.pixijs.com/`);
   }
   saidHello = true;
 }
 
-exports.VERSION = VERSION;
 exports.sayHello = sayHello;
 //# sourceMappingURL=sayHello.js.map

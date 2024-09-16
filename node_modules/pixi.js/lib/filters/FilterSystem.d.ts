@@ -76,7 +76,7 @@ export declare class FilterSystem implements System {
     get activeBackTexture(): Texture | undefined;
     push(instruction: FilterInstruction): void;
     pop(): void;
-    getBackTexture(lastRenderSurface: RenderTarget, bounds: Bounds, previousBounds?: Bounds): Texture;
+    getBackTexture(lastRenderSurface: RenderTarget, bounds: Bounds, previousBounds?: Bounds): Texture<import("..").TextureSource<any>>;
     applyFilter(filter: Filter, input: Texture, output: RenderSurface, clear: boolean): void;
     private _getFilterData;
     /**

@@ -1,5 +1,6 @@
 import { Rectangle } from '../../../../maths/shapes/Rectangle.mjs';
 import { warn } from '../../../../utils/logging/warn.mjs';
+import { CanvasSource } from '../../shared/texture/sources/CanvasSource.mjs';
 import { CLEAR } from '../const.mjs';
 import { GlRenderTarget } from '../GlRenderTarget.mjs';
 
@@ -95,7 +96,9 @@ class GlRenderTargetAdaptor {
     const renderer = this._renderer;
     const gl = renderer.gl;
     const glRenderTarget = new GlRenderTarget();
-    if (renderTarget.colorTexture.resource === renderer.gl.canvas) {
+    const colorTexture = renderTarget.colorTexture;
+    if (CanvasSource.test(colorTexture.resource)) {
+      this._renderer.context.ensureCanvasSize(renderTarget.colorTexture.resource);
       glRenderTarget.framebuffer = null;
       return glRenderTarget;
     }
@@ -274,6 +277,19 @@ class GlRenderTargetAdaptor {
         this._renderer.context.webGLVersion === 2 ? gl.DEPTH24_STENCIL8 : gl.DEPTH_STENCIL,
         glRenderTarget.width,
         glRenderTarget.height
+      );
+    }
+  }
+  postrender(renderTarget) {
+    if (!this._renderer.context.multiView)
+      return;
+    if (CanvasSource.test(renderTarget.colorTexture.resource)) {
+      const contextCanvas = this._renderer.context.canvas;
+      const canvasSource = renderTarget.colorTexture;
+      canvasSource.context2D.drawImage(
+        contextCanvas,
+        0,
+        canvasSource.pixelHeight - contextCanvas.height
       );
     }
   }

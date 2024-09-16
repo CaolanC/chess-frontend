@@ -27,7 +27,7 @@ export declare class GlRenderTargetAdaptor implements RenderTargetAdaptor<GlRend
     }, originDest: {
         x: number;
         y: number;
-    }): Texture;
+    }): Texture<import("../../..").TextureSource<any>>;
     startRenderPass(renderTarget: RenderTarget, clear?: CLEAR_OR_BOOL, clearColor?: RgbaArray, viewport?: Rectangle): void;
     finishRenderPass(renderTarget?: RenderTarget): void;
     initGpuRenderTarget(renderTarget: RenderTarget): GlRenderTarget;
@@ -38,4 +38,5 @@ export declare class GlRenderTargetAdaptor implements RenderTargetAdaptor<GlRend
     private _resizeColor;
     private _initStencil;
     private _resizeStencil;
+    postrender(renderTarget: RenderTarget): void;
 }

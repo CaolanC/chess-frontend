@@ -1,38 +1,17 @@
 'use strict';
 
 var Extensions = require('../../../extensions/Extensions.js');
-var compileHighShaderToProgram = require('../../high-shader/compileHighShaderToProgram.js');
-var colorBit = require('../../high-shader/shader-bits/colorBit.js');
-var generateTextureBatchBit = require('../../high-shader/shader-bits/generateTextureBatchBit.js');
-var roundPixelsBit = require('../../high-shader/shader-bits/roundPixelsBit.js');
-var Shader = require('../../renderers/shared/shader/Shader.js');
 var State = require('../../renderers/shared/state/State.js');
-var maxRecommendedTextures = require('../gl/utils/maxRecommendedTextures.js');
 var getTextureBatchBindGroup = require('./getTextureBatchBindGroup.js');
 
 "use strict";
 const tempState = State.State.for2d();
 class GpuBatchAdaptor {
-  init() {
-    const gpuProgram = compileHighShaderToProgram.compileHighShaderGpuProgram({
-      name: "batch",
-      bits: [
-        colorBit.colorBit,
-        generateTextureBatchBit.generateTextureBatchBit(maxRecommendedTextures.getMaxTexturesPerBatch()),
-        roundPixelsBit.roundPixelsBit
-      ]
-    });
-    this._shader = new Shader.Shader({
-      gpuProgram,
-      groups: {
-        // these will be dynamically allocated
-      }
-    });
-  }
-  start(batchPipe, geometry) {
+  start(batchPipe, geometry, shader) {
     const renderer = batchPipe.renderer;
     const encoder = renderer.encoder;
-    const program = this._shader.gpuProgram;
+    const program = shader.gpuProgram;
+    this._shader = shader;
     this._geometry = geometry;
     encoder.setGeometry(geometry, program);
     tempState.blendMode = "normal";
@@ -68,10 +47,6 @@ class GpuBatchAdaptor {
     encoder.setPipeline(pipeline);
     encoder.renderPassEncoder.setBindGroup(1, gpuBindGroup);
     encoder.renderPassEncoder.drawIndexed(batch.size, 1, batch.start);
-  }
-  destroy() {
-    this._shader.destroy(true);
-    this._shader = null;
   }
 }
 /** @ignore */

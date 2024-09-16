@@ -71,9 +71,9 @@ function addTextureToGeometryData(data, batches, geometryData) {
   const graphicsBatch = BigPool.get(BatchableGraphics);
   graphicsBatch.indexOffset = indexOffset;
   graphicsBatch.indexSize = indices.length - indexOffset;
-  graphicsBatch.vertexOffset = vertOffset;
-  graphicsBatch.vertexSize = vertices.length / 2 - vertOffset;
-  graphicsBatch.color = data.style;
+  graphicsBatch.attributeOffset = vertOffset;
+  graphicsBatch.attributeSize = vertices.length / 2 - vertOffset;
+  graphicsBatch.baseColor = data.style;
   graphicsBatch.alpha = data.alpha;
   graphicsBatch.texture = texture;
   graphicsBatch.geometryData = geometryData;
@@ -128,9 +128,9 @@ function addShapePathToGeometryData(shapePath, style, hole, isStroke, batches, g
     const graphicsBatch = BigPool.get(BatchableGraphics);
     graphicsBatch.indexOffset = indexOffset;
     graphicsBatch.indexSize = indices.length - indexOffset;
-    graphicsBatch.vertexOffset = vertOffset;
-    graphicsBatch.vertexSize = vertices.length / 2 - vertOffset;
-    graphicsBatch.color = style.color;
+    graphicsBatch.attributeOffset = vertOffset;
+    graphicsBatch.attributeSize = vertices.length / 2 - vertOffset;
+    graphicsBatch.baseColor = style.color;
     graphicsBatch.alpha = style.alpha;
     graphicsBatch.texture = texture;
     graphicsBatch.geometryData = geometryData;

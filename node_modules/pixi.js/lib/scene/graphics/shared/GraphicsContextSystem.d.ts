@@ -1,7 +1,6 @@
 import { ExtensionType } from '../../../extensions/Extensions';
-import { Batcher } from '../../../rendering/batcher/shared/Batcher';
-import { BatchGeometry } from '../../../rendering/batcher/shared/BatchGeometry';
 import { InstructionSet } from '../../../rendering/renderers/shared/instructions/InstructionSet';
+import type { Batcher } from '../../../rendering/batcher/shared/Batcher';
 import type { System } from '../../../rendering/renderers/shared/system/System';
 import type { BatchableGraphics } from './BatchableGraphics';
 import type { GraphicsContext } from './GraphicsContext';
@@ -18,7 +17,6 @@ interface GeometryData {
 export declare class GpuGraphicsContext {
     isBatchable: boolean;
     context: GraphicsContext;
-    batcher: Batcher;
     batches: BatchableGraphics[];
     geometryData: GeometryData;
     graphicsData: GraphicsContextRenderData;
@@ -29,9 +27,15 @@ export declare class GpuGraphicsContext {
  * @ignore
  */
 export declare class GraphicsContextRenderData {
-    geometry: BatchGeometry;
+    batcher: Batcher;
     instructions: InstructionSet;
     init(): void;
+    /**
+     * @deprecated since version 8.0.0
+     * Use `batcher.geometry` instead.
+     * @see {Batcher#geometry}
+     */
+    get geometry(): import("../../..").Geometry;
 }
 /**
  * Options for the GraphicsContextSystem.

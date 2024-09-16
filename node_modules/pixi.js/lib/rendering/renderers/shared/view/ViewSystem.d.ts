@@ -4,6 +4,7 @@ import { RenderTarget } from '../renderTarget/RenderTarget';
 import type { ICanvas } from '../../../../environment/canvas/ICanvas';
 import type { TypeOrBool } from '../../../../scene/container/destroyTypes';
 import type { System } from '../system/System';
+import type { CanvasSource } from '../texture/sources/CanvasSource';
 import type { Texture } from '../texture/Texture';
 /**
  * Options passed to the ViewSystem
@@ -60,11 +61,6 @@ export interface ViewSystemOptions {
      */
     depth?: boolean;
     /**
-     * TODO: multiView
-     * @memberof rendering.SharedRendererOptions
-     */
-    multiView?: boolean;
-    /**
      * Transparency of the background color, value from `0` (fully transparent) to `1` (fully opaque).
      * @default 1
      */
@@ -88,11 +84,10 @@ export declare class ViewSystem implements System<ViewSystemOptions, TypeOrBool<
     };
     /** The default options for the view system. */
     static defaultOptions: ViewSystemOptions;
-    multiView: boolean;
     /** The canvas element that everything is drawn to. */
     canvas: ICanvas;
     /** The texture that is used to draw the canvas to the screen. */
-    texture: Texture;
+    texture: Texture<CanvasSource>;
     /**
      * Whether CSS dimensions of canvas view should be resized to screen dimensions automatically.
      * @member {boolean}

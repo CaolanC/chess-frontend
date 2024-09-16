@@ -68,7 +68,7 @@ class BitmapTextPipe {
     const chars = Array.from(bitmapText.text);
     const style = bitmapText._style;
     let currentY = bitmapFont.baseLineOffset;
-    const bitmapTextLayout = getBitmapTextLayout.getBitmapTextLayout(chars, style, bitmapFont);
+    const bitmapTextLayout = getBitmapTextLayout.getBitmapTextLayout(chars, style, bitmapFont, true);
     let index = 0;
     const padding = style.padding;
     const scale = bitmapTextLayout.scale;

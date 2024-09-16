@@ -3,6 +3,7 @@
 "use strict";
 const warnings = {};
 const v8_0_0 = "8.0.0";
+const v8_3_4 = "8.3.4";
 function deprecation(version, message, ignoreDepth = 3) {
   if (warnings[message]) {
     return;
@@ -34,4 +35,5 @@ Deprecated since v${version}`);
 
 exports.deprecation = deprecation;
 exports.v8_0_0 = v8_0_0;
+exports.v8_3_4 = v8_3_4;
 //# sourceMappingURL=deprecation.js.map

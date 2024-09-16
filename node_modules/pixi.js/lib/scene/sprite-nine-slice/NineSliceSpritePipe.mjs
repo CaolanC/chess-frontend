@@ -10,23 +10,23 @@ class NineSliceSpritePipe {
     this._destroyRenderableBound = this.destroyRenderable.bind(this);
     this._renderer = renderer;
   }
-  addRenderable(sprite, _instructionSet) {
+  addRenderable(sprite, instructionSet) {
     const gpuSprite = this._getGpuSprite(sprite);
     if (sprite._didSpriteUpdate)
       this._updateBatchableSprite(sprite, gpuSprite);
-    this._renderer.renderPipes.batch.addToBatch(gpuSprite);
+    this._renderer.renderPipes.batch.addToBatch(gpuSprite, instructionSet);
   }
   updateRenderable(sprite) {
     const gpuSprite = this._gpuSpriteHash[sprite.uid];
     if (sprite._didSpriteUpdate)
       this._updateBatchableSprite(sprite, gpuSprite);
-    gpuSprite.batcher.updateElement(gpuSprite);
+    gpuSprite._batcher.updateElement(gpuSprite);
   }
   validateRenderable(sprite) {
     const texture = sprite._texture;
     const gpuSprite = this._getGpuSprite(sprite);
     if (gpuSprite.texture._source !== texture._source) {
-      return !gpuSprite.batcher.checkAndUpdateTexture(gpuSprite, texture);
+      return !gpuSprite._batcher.checkAndUpdateTexture(gpuSprite, texture);
     }
     return false;
   }
@@ -48,7 +48,8 @@ class NineSliceSpritePipe {
   _initGPUSprite(sprite) {
     const batchableMesh = BigPool.get(BatchableMesh);
     batchableMesh.geometry = BigPool.get(NineSliceGeometry);
-    batchableMesh.mesh = sprite;
+    batchableMesh.renderable = sprite;
+    batchableMesh.transform = sprite.groupTransform;
     batchableMesh.texture = sprite._texture;
     batchableMesh.roundPixels = this._renderer._roundPixels | sprite._roundPixels;
     sprite._didSpriteUpdate = true;

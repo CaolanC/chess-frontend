@@ -1,3 +1,4 @@
+import { TextureSource } from './sources/TextureSource';
 import { Texture } from './Texture';
 import type { TextureSourceOptions } from './sources/TextureSource';
 /**
@@ -49,7 +50,7 @@ export declare class TexturePoolClass {
      * @param antialias - Whether to use antialias.
      * @returns A texture that is a power of two
      */
-    getSameSizeTexture(texture: Texture, antialias?: boolean): Texture;
+    getSameSizeTexture(texture: Texture, antialias?: boolean): Texture<TextureSource<any>>;
     /**
      * Place a render texture back into the pool.
      * @param renderTexture - The renderTexture to free

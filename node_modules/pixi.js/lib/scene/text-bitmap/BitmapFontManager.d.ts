@@ -94,14 +94,16 @@ declare class BitmapFontManagerClass {
      * Get the layout of a text for the specified style.
      * @param text - The text to get the layout for
      * @param style - The style to use
+     * @param trimEnd - Whether to ignore whitespaces at the end of each line
      */
-    getLayout(text: string, style: TextStyle): BitmapTextLayoutData;
+    getLayout(text: string, style: TextStyle, trimEnd?: boolean): BitmapTextLayoutData;
     /**
      * Measure the text using the specified style.
      * @param text - The text to measure
      * @param style - The style to use
+     * @param trimEnd - Whether to ignore whitespaces at the end of each line
      */
-    measureText(text: string, style: TextStyle): {
+    measureText(text: string, style: TextStyle, trimEnd?: boolean): {
         width: number;
         height: number;
         scale: number;

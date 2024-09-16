@@ -8,4 +8,4 @@ import type { Loader } from '../../../Loader';
  * @param url - url of the texture
  * @ignore
  */
-export declare function createTexture(source: TextureSource, loader: Loader, url: string): Texture;
+export declare function createTexture(source: TextureSource, loader: Loader, url: string): Texture<TextureSource<any>>;

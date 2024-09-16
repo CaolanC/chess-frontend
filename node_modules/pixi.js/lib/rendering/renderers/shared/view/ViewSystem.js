@@ -53,7 +53,6 @@ const _ViewSystem = class _ViewSystem {
       isRoot: true
     });
     this.texture.source.transparent = options.backgroundAlpha < 1;
-    this.multiView = !!options.multiView;
     this.resolution = options.resolution;
   }
   /**

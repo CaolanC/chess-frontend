@@ -22,6 +22,7 @@ var ExtensionType = /* @__PURE__ */ ((ExtensionType2) => {
   ExtensionType2["TextureSource"] = "texture-source";
   ExtensionType2["Environment"] = "environment";
   ExtensionType2["ShapeBuilder"] = "shape-builder";
+  ExtensionType2["Batcher"] = "batcher";
   return ExtensionType2;
 })(ExtensionType || {});
 const normalizeExtension = (ext) => {

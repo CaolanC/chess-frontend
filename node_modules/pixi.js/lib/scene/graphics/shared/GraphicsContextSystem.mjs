@@ -1,15 +1,14 @@
 import { ExtensionType } from '../../../extensions/Extensions.mjs';
 import { getTextureBatchBindGroup } from '../../../rendering/batcher/gpu/getTextureBatchBindGroup.mjs';
-import { Batcher } from '../../../rendering/batcher/shared/Batcher.mjs';
-import { BatchGeometry } from '../../../rendering/batcher/shared/BatchGeometry.mjs';
+import { DefaultBatcher } from '../../../rendering/batcher/shared/DefaultBatcher.mjs';
 import { InstructionSet } from '../../../rendering/renderers/shared/instructions/InstructionSet.mjs';
+import { deprecation, v8_3_4 } from '../../../utils/logging/deprecation.mjs';
 import { BigPool } from '../../../utils/pool/PoolGroup.mjs';
 import { buildContextBatches } from './utils/buildContextBatches.mjs';
 
 "use strict";
 class GpuGraphicsContext {
   constructor() {
-    this.batcher = new Batcher();
     this.batches = [];
     this.geometryData = {
       vertices: [],
@@ -20,11 +19,20 @@ class GpuGraphicsContext {
 }
 class GraphicsContextRenderData {
   constructor() {
-    this.geometry = new BatchGeometry();
+    this.batcher = new DefaultBatcher();
     this.instructions = new InstructionSet();
   }
   init() {
     this.instructions.reset();
+  }
+  /**
+   * @deprecated since version 8.0.0
+   * Use `batcher.geometry` instead.
+   * @see {Batcher#geometry}
+   */
+  get geometry() {
+    deprecation(v8_3_4, "GraphicsContextRenderData#geometry is deprecated, please use batcher.geometry instead.");
+    return this.batcher.geometry;
   }
 }
 const _GraphicsContextSystem = class _GraphicsContextSystem {
@@ -70,12 +78,13 @@ const _GraphicsContextSystem = class _GraphicsContextSystem {
   }
   _initContextRenderData(context) {
     const graphicsData = BigPool.get(GraphicsContextRenderData);
-    const { batches, geometryData, batcher } = this._gpuContextHash[context.uid];
+    const { batches, geometryData } = this._gpuContextHash[context.uid];
     const vertexSize = geometryData.vertices.length;
     const indexSize = geometryData.indices.length;
     for (let i = 0; i < batches.length; i++) {
       batches[i].applyTransform = false;
     }
+    const batcher = graphicsData.batcher;
     batcher.ensureAttributeBuffer(vertexSize);
     batcher.ensureIndexBuffer(indexSize);
     batcher.begin();
@@ -84,7 +93,7 @@ const _GraphicsContextSystem = class _GraphicsContextSystem {
       batcher.add(batch);
     }
     batcher.finish(graphicsData.instructions);
-    const geometry = graphicsData.geometry;
+    const geometry = batcher.geometry;
     geometry.indexBuffer.setDataWithSize(batcher.indexBuffer, batcher.indexSize, true);
     geometry.buffers[0].setDataWithSize(batcher.attributeBuffer.float32View, batcher.attributeSize, true);
     const drawBatches = batcher.batches;

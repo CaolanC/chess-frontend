@@ -1,36 +1,15 @@
 import { ExtensionType } from '../../../extensions/Extensions.mjs';
-import { compileHighShaderGpuProgram } from '../../high-shader/compileHighShaderToProgram.mjs';
-import { colorBit } from '../../high-shader/shader-bits/colorBit.mjs';
-import { generateTextureBatchBit } from '../../high-shader/shader-bits/generateTextureBatchBit.mjs';
-import { roundPixelsBit } from '../../high-shader/shader-bits/roundPixelsBit.mjs';
-import { Shader } from '../../renderers/shared/shader/Shader.mjs';
 import { State } from '../../renderers/shared/state/State.mjs';
-import { getMaxTexturesPerBatch } from '../gl/utils/maxRecommendedTextures.mjs';
 import { getTextureBatchBindGroup } from './getTextureBatchBindGroup.mjs';
 
 "use strict";
 const tempState = State.for2d();
 class GpuBatchAdaptor {
-  init() {
-    const gpuProgram = compileHighShaderGpuProgram({
-      name: "batch",
-      bits: [
-        colorBit,
-        generateTextureBatchBit(getMaxTexturesPerBatch()),
-        roundPixelsBit
-      ]
-    });
-    this._shader = new Shader({
-      gpuProgram,
-      groups: {
-        // these will be dynamically allocated
-      }
-    });
-  }
-  start(batchPipe, geometry) {
+  start(batchPipe, geometry, shader) {
     const renderer = batchPipe.renderer;
     const encoder = renderer.encoder;
-    const program = this._shader.gpuProgram;
+    const program = shader.gpuProgram;
+    this._shader = shader;
     this._geometry = geometry;
     encoder.setGeometry(geometry, program);
     tempState.blendMode = "normal";
@@ -66,10 +45,6 @@ class GpuBatchAdaptor {
     encoder.setPipeline(pipeline);
     encoder.renderPassEncoder.setBindGroup(1, gpuBindGroup);
     encoder.renderPassEncoder.drawIndexed(batch.size, 1, batch.start);
-  }
-  destroy() {
-    this._shader.destroy(true);
-    this._shader = null;
   }
 }
 /** @ignore */

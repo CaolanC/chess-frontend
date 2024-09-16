@@ -1,7 +1,7 @@
 'use strict';
 
 "use strict";
-function getBitmapTextLayout(chars, style, font) {
+function getBitmapTextLayout(chars, style, font, trimEnd) {
   const layoutData = {
     width: 0,
     height: 0,
@@ -43,10 +43,12 @@ function getBitmapTextLayout(chars, style, font) {
   };
   const nextLine = () => {
     let index = currentLine.chars.length - 1;
-    let lastChar = currentLine.chars[index];
-    while (lastChar === " ") {
-      currentLine.width -= font.chars[lastChar].xAdvance;
-      lastChar = currentLine.chars[--index];
+    if (trimEnd) {
+      let lastChar = currentLine.chars[index];
+      while (lastChar === " ") {
+        currentLine.width -= font.chars[lastChar].xAdvance;
+        lastChar = currentLine.chars[--index];
+      }
     }
     layoutData.width = Math.max(layoutData.width, currentLine.width);
     currentLine = {

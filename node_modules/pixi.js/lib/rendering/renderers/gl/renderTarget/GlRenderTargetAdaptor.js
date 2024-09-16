@@ -2,6 +2,7 @@
 
 var Rectangle = require('../../../../maths/shapes/Rectangle.js');
 var warn = require('../../../../utils/logging/warn.js');
+var CanvasSource = require('../../shared/texture/sources/CanvasSource.js');
 var _const = require('../const.js');
 var GlRenderTarget = require('../GlRenderTarget.js');
 
@@ -97,7 +98,9 @@ class GlRenderTargetAdaptor {
     const renderer = this._renderer;
     const gl = renderer.gl;
     const glRenderTarget = new GlRenderTarget.GlRenderTarget();
-    if (renderTarget.colorTexture.resource === renderer.gl.canvas) {
+    const colorTexture = renderTarget.colorTexture;
+    if (CanvasSource.CanvasSource.test(colorTexture.resource)) {
+      this._renderer.context.ensureCanvasSize(renderTarget.colorTexture.resource);
       glRenderTarget.framebuffer = null;
       return glRenderTarget;
     }
@@ -276,6 +279,19 @@ class GlRenderTargetAdaptor {
         this._renderer.context.webGLVersion === 2 ? gl.DEPTH24_STENCIL8 : gl.DEPTH_STENCIL,
         glRenderTarget.width,
         glRenderTarget.height
+      );
+    }
+  }
+  postrender(renderTarget) {
+    if (!this._renderer.context.multiView)
+      return;
+    if (CanvasSource.CanvasSource.test(renderTarget.colorTexture.resource)) {
+      const contextCanvas = this._renderer.context.canvas;
+      const canvasSource = renderTarget.colorTexture;
+      canvasSource.context2D.drawImage(
+        contextCanvas,
+        0,
+        canvasSource.pixelHeight - contextCanvas.height
       );
     }
   }

@@ -27,7 +27,7 @@ class TilingSpritePipe {
     if (canBatch && canBatch === couldBatch) {
       const { batchableMesh } = tilingSpriteData;
       if (batchableMesh && batchableMesh.texture._source !== renderable.texture._source) {
-        return !batchableMesh.batcher.checkAndUpdateTexture(batchableMesh, renderable.texture);
+        return !batchableMesh._batcher.checkAndUpdateTexture(batchableMesh, renderable.texture);
       }
     }
     return couldBatch !== canBatch;
@@ -44,11 +44,12 @@ class TilingSpritePipe {
         tilingSprite._didTilingSpriteUpdate = false;
         this._updateBatchableMesh(tilingSprite);
         batchableMesh.geometry = geometry;
-        batchableMesh.mesh = tilingSprite;
+        batchableMesh.renderable = tilingSprite;
+        batchableMesh.transform = tilingSprite.groupTransform;
         batchableMesh.texture = tilingSprite._texture;
       }
       batchableMesh.roundPixels = this._renderer._roundPixels | tilingSprite._roundPixels;
-      batcher.addToBatch(batchableMesh);
+      batcher.addToBatch(batchableMesh, instructionSet);
     } else {
       batcher.break(instructionSet);
       tilingSpriteData.shader || (tilingSpriteData.shader = new TilingSpriteShader());
@@ -81,7 +82,7 @@ class TilingSpritePipe {
       const { batchableMesh } = tilingSpriteData;
       if (tilingSprite._didTilingSpriteUpdate)
         this._updateBatchableMesh(tilingSprite);
-      batchableMesh.batcher.updateElement(batchableMesh);
+      batchableMesh._batcher.updateElement(batchableMesh);
     } else if (tilingSprite._didTilingSpriteUpdate) {
       const { shader } = tilingSpriteData;
       shader.updateUniforms(

@@ -2,6 +2,7 @@ import { Matrix } from '../../../../maths/matrix/Matrix';
 import { Rectangle } from '../../../../maths/shapes/Rectangle';
 import { CLEAR } from '../../gl/const';
 import { SystemRunner } from '../system/SystemRunner';
+import { TextureSource } from '../texture/sources/TextureSource';
 import { Texture } from '../texture/Texture';
 import { RenderTarget } from './RenderTarget';
 import type { RgbaArray } from '../../../../color/Color';
@@ -72,6 +73,8 @@ export interface RenderTargetAdaptor<RENDER_TARGET extends GlRenderTarget | GpuR
     viewport?: Rectangle): void;
     /** finishes the current render pass */
     finishRenderPass(renderTarget: RenderTarget): void;
+    /** called after the render pass is finished */
+    postrender?(renderTarget: RenderTarget): void;
     /**
      * initializes a gpu render target. Both renderers use this function to initialize a gpu render target
      * Its different type of object depending on the renderer.
@@ -169,6 +172,7 @@ export declare class RenderTargetSystem<RENDER_TARGET extends GlRenderTarget | G
         clearColor: RgbaArray;
         frame?: Rectangle;
     }): void;
+    postrender(): void;
     /**
      * Binding a render surface! This is the main function of the render target system.
      * It will take the RenderSurface (which can be a texture, canvas, or render target) and bind it to the renderer.
@@ -225,7 +229,7 @@ export declare class RenderTargetSystem<RENDER_TARGET extends GlRenderTarget | G
     }, originDest: {
         x: number;
         y: number;
-    }): Texture;
+    }): Texture<TextureSource<any>>;
     /**
      * ensures that we have a depth stencil buffer available to render to
      * This is used by the mask system to make sure we have a stencil buffer.
