@@ -132,7 +132,7 @@ eval("\nmodule.exports = parse\n\n/**\n * expected argument lengths\n * @type {O
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   initApp: () => (/* binding */ initApp)\n/* harmony export */ });\n/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ \"./node_modules/pixi.js/lib/index.mjs\");\n/* harmony import */ var _chessBoard__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./chessBoard */ \"./src/chessBoard.js\");\n\n\n\nasync function initApp(app) {\n    // Create the PixiJS application and pass in the options directly\n    await app.init({\n        resizeTo: document.getElementById(\"game-container\"),\n        backgroundColor: 0x1099bb,  // Optional background color\n    });\n\n    // Optionally, draw your chessboard or other elements on the app's stage\n    (0,_chessBoard__WEBPACK_IMPORTED_MODULE_1__.drawBoard)(app);\n\n    // Optionally, you can load assets here using PixiJS's asset loader if needed\n    // await app.loadAssets(); // Example if you have a loadAssets function\n\n    //consoled.log(app);  // Log the app object to ensure it's properly initialized\n\n    // Return the app so that the calling function can use it\n    return app;\n}\n\n\n//# sourceURL=webpack://2d/./src/app.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   initApp: () => (/* binding */ initApp)\n/* harmony export */ });\n/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ \"./node_modules/pixi.js/lib/index.mjs\");\n/* harmony import */ var _chessBoard__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./chessBoard */ \"./src/chessBoard.js\");\n\n\n\nasync function initApp(app) {\n    // Create the PixiJS application and pass in the options directly\n    await app.init({\n        resizeTo: document.getElementById(\"game-container\"),\n        backgroundColor: 0x1099bb,  // Optional background color\n    });\n\n    // Optionally, draw your chessboard or other elements on the app's stage\n    let board = (0,_chessBoard__WEBPACK_IMPORTED_MODULE_1__.drawBoard)(app, 8);\n\n    // Optionally, you can load assets here using PixiJS's asset loader if needed\n    // await app.loadAssets(); // Example if you have a loadAssets function\n\n    //consoled.log(app);  // Log the app object to ensure it's properly initialized\n\n    // Return the app so that the calling function can use it\n    return app;\n}\n\n\n//# sourceURL=webpack://2d/./src/app.js?");
 
 /***/ }),
 
@@ -143,7 +143,17 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   drawBoard: () => (/* binding */ drawBoard)\n/* harmony export */ });\n/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ \"./node_modules/pixi.js/lib/index.mjs\");\n\n\nasync function drawBoard(app) {\n    const boardSize = 8;\n    const squareSize = app.view.width / boardSize;\n    const graphics = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Graphics();\n\n    for (let row = 0; row < boardSize; row++) {\n        for (let col = 0; col < boardSize; col++) {\n            \n            let color = 0xd496c6;\n            \n            if ((row + col) % 2) {\n                color = 0x34eb52;\n            }\n            graphics.rect(squareSize * row,squareSize * col, squareSize, squareSize).fill(color);\n        }\n    }\n    app.stage.addChild(graphics);\n}\n\n\n//# sourceURL=webpack://2d/./src/chessBoard.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   drawBoard: () => (/* binding */ drawBoard)\n/* harmony export */ });\n/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ \"./node_modules/pixi.js/lib/index.mjs\");\n\n\nasync function drawBoard(app, boardSize) {\n    const squareSize = app.view.width / boardSize;\n\n    for (let row = 0; row < boardSize; row++) {\n        for (let col = 0; col < boardSize; col++) {\n            const square = new pixi_js__WEBPACK_IMPORTED_MODULE_0__.Graphics();\n            let color = 0xebeae8;\n            \n            if ((row + col) % 2) {\n                color = 0xc2b4a1;\n            }\n            square.rect(squareSize * row,squareSize * col, squareSize, squareSize).fill(color);\n\n            square.interactive = true;\n            square.buttonMode = true; // Changes cursor on hover\n\n            // Add event listeners to the square\n            square.on('pointerdown', () => {\n                console.log(`Square clicked: Row ${row}, Col ${col}`);\n                square.clear();\n                square.fill(0xff1c3e);\n                // Add any further actions you want to perform when a square is clicked \n            });\n\n            app.stage.addChild(square);\n        }\n    }\n}\n\n\n//# sourceURL=webpack://2d/./src/chessBoard.js?");
+
+/***/ }),
+
+/***/ "./src/chessPiece.js":
+/*!***************************!*\
+  !*** ./src/chessPiece.js ***!
+  \***************************/
+/***/ (() => {
+
+eval("\n\n//# sourceURL=webpack://2d/./src/chessPiece.js?");
 
 /***/ }),
 
@@ -6233,7 +6243,10 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module can't be inlined because the eval devtool is used.
-/******/ 	var __webpack_exports__ = __webpack_require__("./src/index.js");
+/******/ 	__webpack_require__("./src/index.js");
+/******/ 	__webpack_require__("./src/chessBoard.js");
+/******/ 	__webpack_require__("./src/chessPiece.js");
+/******/ 	var __webpack_exports__ = __webpack_require__("./src/app.js");
 /******/ 	
 /******/ })()
 ;

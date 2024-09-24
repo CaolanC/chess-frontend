@@ -1,20 +1,30 @@
 import { Graphics } from 'pixi.js';
 
-export async function drawBoard(app) {
-    const boardSize = 8;
+export async function drawBoard(app, boardSize) {
     const squareSize = app.view.width / boardSize;
-    const graphics = new Graphics();
 
     for (let row = 0; row < boardSize; row++) {
         for (let col = 0; col < boardSize; col++) {
-            
-            let color = 0xd496c6;
+            const square = new Graphics();
+            let color = 0xebeae8;
             
             if ((row + col) % 2) {
-                color = 0x34eb52;
+                color = 0xc2b4a1;
             }
-            graphics.rect(squareSize * row,squareSize * col, squareSize, squareSize).fill(color);
+            square.rect(squareSize * row,squareSize * col, squareSize, squareSize).fill(color);
+
+            square.interactive = true;
+            square.buttonMode = true; // Changes cursor on hover
+
+            // Add event listeners to the square
+            square.on('pointerdown', () => {
+                console.log(`Square clicked: Row ${row}, Col ${col}`);
+                square.clear();
+                square.fill(0xff1c3e);
+                // Add any further actions you want to perform when a square is clicked 
+            });
+
+            app.stage.addChild(square);
         }
     }
-    app.stage.addChild(graphics);
 }

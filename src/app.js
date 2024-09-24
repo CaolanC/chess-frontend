@@ -9,7 +9,7 @@ export async function initApp(app) {
     });
 
     // Optionally, draw your chessboard or other elements on the app's stage
-    drawBoard(app);
+    let board = drawBoard(app, 8);
 
     // Optionally, you can load assets here using PixiJS's asset loader if needed
     // await app.loadAssets(); // Example if you have a loadAssets function
