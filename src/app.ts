@@ -16,7 +16,12 @@ export async function initApp(app: Application) {
     });
 
     // Optionally, draw your chessboard or other elements on the app's stage
+<<<<<<< Updated upstream
+    let board = drawBoard(app, 26);
+=======
+
     let board = drawBoard(app, 8);
+>>>>>>> Stashed changes
 
     // Optionally, you can load assets here using PixiJS's asset loader if needed
     // await app.loadAssets(); // Example if you have a loadAssets function

@@ -21,6 +21,6 @@ const app = new Application();
     container.appendChild(app.canvas);
 })(); 
 
-window.addEventListener('resize', () => {
-    app.resize();
-})
+// window.addEventListener('resize', () => {
+//     app.resize();
+// })
