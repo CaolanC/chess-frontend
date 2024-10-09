@@ -1,26 +1,13 @@
-import { initApp } from './app'; //because this is typescript I don't understand how it can have a warning for relative imports pre compilation. This is either a bug, or it just works anyway lol
-import { Application } from 'pixi.js';
+import { ChessFrontend } from './board';
 
-const app = new Application();
+const board_size = 26;
+const parent_container_id = 'game-container'
+const parent_container = document.getElementById(parent_container_id);
 
-// Asynchronous IIFE
-(async () =>
-{
-    // Create a PixiJS application.
-    await initApp(app);
-    // Intialize the application.
-    //await app.init({ background: '#1099bb', resizeTo: window });
+if (!parent_container) {
+    throw new Error(`Parent container '${parent_container_id}' not found.`);
+}
 
-    // Then adding the application's canvas to the DOM body.
-    let container = document.getElementById('game-container');
-
-    if (!container) {
-        throw new Error("game-container element not found");
-    }
-
-    container.appendChild(app.canvas);
-})(); 
-
-// window.addEventListener('resize', () => {
-//     app.resize();
-// })
+const board = new ChessFrontend.Board(board_size, parent_container);
+board.initApp();
+board.draw();

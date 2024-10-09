@@ -9,36 +9,14 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./dist/app.js":
-/*!*********************!*\
-  !*** ./dist/app.js ***!
-  \*********************/
+/***/ "./dist/board.js":
+/*!***********************!*\
+  !*** ./dist/board.js ***!
+  \***********************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
-eval("\nvar __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {\n    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }\n    return new (P || (P = Promise))(function (resolve, reject) {\n        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }\n        function rejected(value) { try { step(generator[\"throw\"](value)); } catch (e) { reject(e); } }\n        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }\n        step((generator = generator.apply(thisArg, _arguments || [])).next());\n    });\n};\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexports.initApp = initApp;\nconst chessBoard_1 = __webpack_require__(/*! ./chessBoard */ \"./dist/chessBoard.js\");\nfunction initApp(app) {\n    return __awaiter(this, void 0, void 0, function* () {\n        const container = document.getElementById('game-container');\n        if (!container) {\n            throw new Error(\"game-container element not found\");\n        }\n        // Create the PixiJS application and pass in the options directly\n        yield app.init({\n            backgroundColor: 0x1099bb, // Optional background color\n            resizeTo: container\n        });\n        // Optionally, draw your chessboard or other elements on the app's stage\n        let board = (0, chessBoard_1.drawBoard)(app, 26);\n        return app;\n    });\n}\n\n\n//# sourceURL=webpack://2d/./dist/app.js?");
-
-/***/ }),
-
-/***/ "./dist/chessBoard.js":
-/*!****************************!*\
-  !*** ./dist/chessBoard.js ***!
-  \****************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-eval("\nvar __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {\n    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }\n    return new (P || (P = Promise))(function (resolve, reject) {\n        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }\n        function rejected(value) { try { step(generator[\"throw\"](value)); } catch (e) { reject(e); } }\n        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }\n        step((generator = generator.apply(thisArg, _arguments || [])).next());\n    });\n};\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexports.drawBoard = drawBoard;\nconst pixi_js_1 = __webpack_require__(/*! pixi.js */ \"./node_modules/pixi.js/lib/index.js\");\nfunction drawBoard(app, boardSize) {\n    return __awaiter(this, void 0, void 0, function* () {\n        const squareSize = app.canvas.width / boardSize;\n        for (let row = 0; row < boardSize; row++) {\n            for (let col = 0; col < boardSize; col++) {\n                const square = new pixi_js_1.Graphics();\n                let color = 0xebeae8;\n                if ((row + col) % 2) {\n                    color = 0xc2b4a1;\n                }\n                square.rect(squareSize * row, squareSize * col, squareSize, squareSize).fill(color);\n                square.interactive = true;\n                // square.buttonMode = true; // Changes cursor on hover\n                // Add event listeners to the square\n                square.on('pointerdown', () => {\n                    console.log(`Square clicked: Row ${row}, Col ${col}`);\n                    square.clear();\n                    square.fill(0xff1c3e);\n                    // Add any further actions you want to perform when a square is clicked \n                });\n                app.stage.addChild(square);\n            }\n        }\n    });\n}\n\n\n//# sourceURL=webpack://2d/./dist/chessBoard.js?");
-
-/***/ }),
-
-/***/ "./dist/chessPiece.js":
-/*!****************************!*\
-  !*** ./dist/chessPiece.js ***!
-  \****************************/
-/***/ (() => {
-
-"use strict";
-eval("\n\n\n//# sourceURL=webpack://2d/./dist/chessPiece.js?");
+eval("\nvar __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {\n    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }\n    return new (P || (P = Promise))(function (resolve, reject) {\n        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }\n        function rejected(value) { try { step(generator[\"throw\"](value)); } catch (e) { reject(e); } }\n        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }\n        step((generator = generator.apply(thisArg, _arguments || [])).next());\n    });\n};\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nexports.ChessFrontend = void 0;\nconst pixi_js_1 = __webpack_require__(/*! pixi.js */ \"./node_modules/pixi.js/lib/index.js\");\nvar ChessFrontend;\n(function (ChessFrontend) {\n    let SquareUIState;\n    (function (SquareUIState) {\n        SquareUIState[SquareUIState[\"Selected\"] = 0] = \"Selected\";\n        SquareUIState[SquareUIState[\"Highlighted\"] = 1] = \"Highlighted\";\n    })(SquareUIState || (SquareUIState = {}));\n    class Square {\n        constructor(position) {\n            this.States = [];\n            this.Piece = null;\n            this.Position = position;\n        }\n    }\n    class Board {\n        constructor(size, \n        // squares: Square[][],\n        container) {\n            this.App = new pixi_js_1.Application();\n            this.Size = size;\n            // this.Squares = squares;\n            this.Container = container;\n            this.Squares = this._EmptyBoard();\n        }\n        _EmptyBoard() {\n            const squares = [];\n            for (let i = 0; i < this.Size; i++) {\n                squares.push([]);\n                for (let j = 0; j < this.Size; j++) {\n                    squares[i].push(new Square([i, j]));\n                }\n            }\n            return squares;\n        }\n        initApp() {\n            return __awaiter(this, void 0, void 0, function* () {\n                // Create the PixiJS application and pass in the options directly\n                yield this.App.init({\n                    backgroundColor: 0x1099bb, // Optional background color\n                    // resizeTo: container,\n                    width: 600,\n                    height: 600\n                });\n                this.Container.appendChild(this.App.canvas);\n            });\n        }\n        draw() {\n            return __awaiter(this, void 0, void 0, function* () {\n                const squareSize = Math.min(this.Container.clientWidth, this.Container.clientHeight) / this.Size; //Math.min(this.App.view.width, this.App.view.height) / this.Size;\n                for (let row = 0; row < this.Size; row++) {\n                    for (let col = 0; col < this.Size; col++) {\n                        const square = new pixi_js_1.Graphics();\n                        let color = 0xebeae8;\n                        if ((row + col) % 2) {\n                            color = 0xc2b4a1;\n                        }\n                        square.rect(squareSize * row, squareSize * col, squareSize, squareSize).fill(color);\n                        square.interactive = true;\n                        // square.buttonMode = true; // Changes cursor on hover\n                        // Add event listeners to the square\n                        // square.on('pointerdown', () => {\n                        //     console.log(`Square clicked: Row ${row}, Col ${col}`);\n                        //     square.clear();\n                        //     square.fill(0xff1c3e);\n                        //     // Add any further actions you want to perform when a square is clicked \n                        // });\n                        this.App.stage.addChild(square);\n                    }\n                }\n            });\n        }\n    }\n    ChessFrontend.Board = Board;\n    class Piece {\n        constructor(namespace, id, board, position, image_path) {\n            this.Namespace = namespace,\n                this.ID = id;\n            this.Board = board;\n            this.Position = position;\n            this.ImagePath = image_path;\n        }\n        getNamespace() {\n            return this.Namespace;\n        }\n        getId() {\n            return this.ID;\n        }\n        getImagePath() {\n            return this.ImagePath;\n        }\n    }\n})(ChessFrontend || (exports.ChessFrontend = ChessFrontend = {}));\n\n\n//# sourceURL=webpack://2d/./dist/board.js?");
 
 /***/ }),
 
@@ -46,10 +24,10 @@ eval("\n\n\n//# sourceURL=webpack://2d/./dist/chessPiece.js?");
 /*!***********************!*\
   !*** ./dist/index.js ***!
   \***********************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-eval("\nvar __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {\n    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }\n    return new (P || (P = Promise))(function (resolve, reject) {\n        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }\n        function rejected(value) { try { step(generator[\"throw\"](value)); } catch (e) { reject(e); } }\n        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }\n        step((generator = generator.apply(thisArg, _arguments || [])).next());\n    });\n};\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nconst app_1 = __webpack_require__(/*! ./app */ \"./dist/app.js\"); //because this is typescript I don't understand how it can have a warning for relative imports pre compilation. This is either a bug, or it just works anyway lol\nconst pixi_js_1 = __webpack_require__(/*! pixi.js */ \"./node_modules/pixi.js/lib/index.js\");\nconst app = new pixi_js_1.Application();\n// Asynchronous IIFE\n(() => __awaiter(void 0, void 0, void 0, function* () {\n    // Create a PixiJS application.\n    yield (0, app_1.initApp)(app);\n    // Intialize the application.\n    //await app.init({ background: '#1099bb', resizeTo: window });\n    // Then adding the application's canvas to the DOM body.\n    let container = document.getElementById('game-container');\n    if (!container) {\n        throw new Error(\"game-container element not found\");\n    }\n    container.appendChild(app.canvas);\n}))();\n// window.addEventListener('resize', () => {\n//     app.resize();\n// })\n\n\n//# sourceURL=webpack://2d/./dist/index.js?");
+eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nconst board_1 = __webpack_require__(/*! ./board */ \"./dist/board.js\");\nconst board_size = 26;\nconst parent_container_id = 'game-container';\nconst parent_container = document.getElementById(parent_container_id);\nif (!parent_container) {\n    throw new Error(`Parent container '${parent_container_id}' not found.`);\n}\nconst board = new board_1.ChessFrontend.Board(board_size, parent_container);\nboard.initApp();\nboard.draw();\n\n\n//# sourceURL=webpack://2d/./dist/index.js?");
 
 /***/ }),
 
@@ -6815,11 +6793,8 @@ eval("\n\nvar EventEmitter = __webpack_require__(/*! eventemitter3 */ \"./node_m
 /******/ 	
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	__webpack_require__("./dist/index.js");
-/******/ 	__webpack_require__("./dist/chessBoard.js");
-/******/ 	__webpack_require__("./dist/chessPiece.js");
-/******/ 	var __webpack_exports__ = __webpack_require__("./dist/app.js");
+/******/ 	// This entry module can't be inlined because the eval devtool is used.
+/******/ 	var __webpack_exports__ = __webpack_require__("./dist/index.js");
 /******/ 	
 /******/ })()
 ;
