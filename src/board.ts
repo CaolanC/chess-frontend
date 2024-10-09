@@ -8,14 +8,14 @@ export namespace ChessFrontend
         Highlighted
     }
 
-    type Position = [number, number];
+    type Position = [number, number]; // Better explicity typing
 
-    class Square
+    class Square // Represents a square in the board
     {
         public Position: Position;
-        public States: SquareUIState[] = [];
+        public States: SquareUIState[] = []; // A list of extensible UI states that the square can take on
         public Piece: Piece | null = null;
-        protected DefaultColor: number;
+        protected DefaultColor: number; // Chessboard colours alternate, this represents what background colour this square has
         protected Graphic: Graphics = new Graphics();
 
         constructor(
@@ -27,7 +27,7 @@ export namespace ChessFrontend
             this.DefaultColor = default_color;
         }
 
-        public draw(
+        public draw( // Squares are responsible for drawing themselves. The board iterates over all squares calling this method.
             app: Application,
             square_size: number,
             row: number,
@@ -61,7 +61,7 @@ export namespace ChessFrontend
             this.Squares = this._EmptyBoard();
         }
 
-        protected _EmptyBoard(): Square[][] {
+        protected _EmptyBoard(): Square[][] { // Returns a 2d array equal to the Board's size filled with null values
 
             const squares: Square[][] = [];
             let color: number;
@@ -87,7 +87,7 @@ export namespace ChessFrontend
         {
             // Create the PixiJS application and pass in the options directly
             await this.App.init({
-                backgroundColor: 0x1099bb,  // Optional background color
+                backgroundColor: 0x1099bb,  // Optional background color: Handy to have, it indicates if we're rendering something incorrectly
                 // resizeTo: container,
                 width: 600,
                 height: 600
@@ -96,22 +96,12 @@ export namespace ChessFrontend
             this.Container.appendChild(this.App.canvas);
         }
 
-        public async draw(): Promise<void> {
+        public async draw(): Promise<void> { // Iterate over all squares, calling their draw() method.
             const square_size = Math.min(this.Container.clientWidth, this.Container.clientHeight) / this.Size; //Math.min(this.App.view.width, this.App.view.height) / this.Size;
 
             for (let row = 0; row < this.Size; row++) {
                 for (let col = 0; col < this.Size; col++) {
                     this.Squares[row][col].draw(this.App, square_size, row, col);
-                    // square.interactive = true;
-                    // square.buttonMode = true; // Changes cursor on hover
-        
-                    // Add event listeners to the square
-                    // square.on('pointerdown', () => {
-                    //     console.log(`Square clicked: Row ${row}, Col ${col}`);
-                    //     square.clear();
-                    //     square.fill(0xff1c3e);
-                    //     // Add any further actions you want to perform when a square is clicked 
-                    // });
                 }
             }
         }
@@ -133,7 +123,7 @@ export namespace ChessFrontend
                 position: Position,
                 image_path: string
         ) {
-            this.Namespace = namespace,
+            this.Namespace = namespace, // Namespacing and ID's are so that we can uniquely identify a piece's sprite on the backend without storing it in the engine instance
             this.ID = id;
             this.Board = board;
             this.Position = position;
@@ -153,3 +143,14 @@ export namespace ChessFrontend
         }
     }
 }
+
+// square.interactive = true;
+// square.buttonMode = true; // Changes cursor on hover
+
+// Add event listeners to the square
+// square.on('pointerdown', () => {
+//     console.log(`Square clicked: Row ${row}, Col ${col}`);
+//     square.clear();
+//     square.fill(0xff1c3e);
+//     // Add any further actions you want to perform when a square is clicked 
+// });
