@@ -6,13 +6,16 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
-    "dev": "$(webpack & tsc --watch & live-server)"
+    "sass:watch": "sass --watch ./public/scss:./public/css",
+    "sass:build": "sass ./public/scss:./public/css",
+    "dev": "$(webpack & tsc --watch & live-server & npm run sass:watch)"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "pixi.js": "^8.3.4",
+    "sass": "^1.79.4",
     "typescript": "^5.6.2"
   },
   "devDependencies": {

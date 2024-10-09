@@ -1,0 +1,62 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+}
+
+h1 {
+  text-align: center;
+}
+
+#chessplusplus-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+.menu-container {
+  background-color: rgb(51, 253, 121);
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+  padding: 10px;
+  flex: 1;
+  margin: 30px;
+}
+
+.menu-container button {
+  margin-top: 10px;
+}
+
+.canvas-parent-container {
+  display: flex;
+  flex: 5;
+}
+
+#game-container {
+  max-width: 600px;
+  max-height: 600px;
+  width: 600px;
+  height: 600px;
+  aspect-ratio: 1/1;
+  margin: 0 auto;
+  background-color: grey;
+  flex: 3;
+  margin: 30px;
+}
+
+/*# sourceMappingURL=style.css.map */
