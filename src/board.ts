@@ -15,40 +15,68 @@ export namespace ChessFrontend
         public Position: Position;
         public States: SquareUIState[] = [];
         public Piece: Piece | null = null;
+        protected DefaultColor: number;
+        protected Graphic: Graphics = new Graphics();
 
         constructor(
                 position: Position,
+                default_color: number
             )
         {
             this.Position = position;
+            this.DefaultColor = default_color;
+        }
+
+        public draw(
+            app: Application,
+            square_size: number,
+            row: number,
+            col: number
+        ): void {
+
+            this.Graphic.rect(square_size * row, square_size * col, square_size, square_size).fill(this.DefaultColor);
+        
+            app.stage.addChild(this.Graphic);
         }
     }
 
     export class Board 
     {
-        public Size: number;
         public Container: HTMLElement;
+        public readonly Size: number;
+        protected DefaultColors: [number, number];
         protected Squares: Square[][];
         protected readonly App: Application = new Application();
 
         constructor(
                 size: number,
                 // squares: Square[][],
-                container: HTMLElement
+                container: HTMLElement,
+                default_colors: [number, number]
         ) {
             this.Size = size;
             // this.Squares = squares;
             this.Container = container;
+            this.DefaultColors = default_colors;
             this.Squares = this._EmptyBoard();
         }
 
         protected _EmptyBoard(): Square[][] {
 
             const squares: Square[][] = [];
-            for(let i = 0; i < this.Size; i++) {
+            let color: number;
+
+            for(let row = 0; row < this.Size; row++) {
                 squares.push([]);
-                for(let j = 0; j < this.Size; j++) {
-                    squares[i].push(new Square([i, j]));
+                for(let col = 0; col < this.Size; col++) {
+                    
+                    color = this.DefaultColors[0];
+
+                    if ((row + col) % 2) {
+                        color = this.DefaultColors[1];
+                    }
+
+                    squares[row].push(new Square([row, col], color));
                 }
             }
 
@@ -69,20 +97,12 @@ export namespace ChessFrontend
         }
 
         public async draw(): Promise<void> {
-            const squareSize = Math.min(this.Container.clientWidth, this.Container.clientHeight) / this.Size; //Math.min(this.App.view.width, this.App.view.height) / this.Size;
+            const square_size = Math.min(this.Container.clientWidth, this.Container.clientHeight) / this.Size; //Math.min(this.App.view.width, this.App.view.height) / this.Size;
 
             for (let row = 0; row < this.Size; row++) {
                 for (let col = 0; col < this.Size; col++) {
-                    const square = new Graphics();
-                    let color = 0xebeae8;
-                    
-                    if ((row + col) % 2) {
-                        color = 0xc2b4a1;
-                    }
-                    
-                    square.rect(squareSize * row,squareSize * col, squareSize, squareSize).fill(color);
-        
-                    square.interactive = true;
+                    this.Squares[row][col].draw(this.App, square_size, row, col);
+                    // square.interactive = true;
                     // square.buttonMode = true; // Changes cursor on hover
         
                     // Add event listeners to the square
@@ -92,7 +112,6 @@ export namespace ChessFrontend
                     //     square.fill(0xff1c3e);
                     //     // Add any further actions you want to perform when a square is clicked 
                     // });
-                    this.App.stage.addChild(square);
                 }
             }
         }
