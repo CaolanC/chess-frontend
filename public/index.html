@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width", initial-scale="1.0">
         <title>2D Chess Renderer</title>
-        <link rel="stylesheet" href="./css/style.css">
+        <link rel="stylesheet" href="/css/style.css">
     </head>
     <body>
         <div id="chessplusplus-container">
@@ -28,21 +28,17 @@
                     <h2>01:03</h2>
                 </div>
             </div>
-            <!-- <div class="menu-container">
-                <input type="text" placeholder="Enter name...">
-                <button>Join Game</button>
-                <button>Host Game</button>
-            </div> -->
             <div class="powerup">
                 <h2>Powerup</h2>
                 <h3>(Item)</h3>
             </div>
         </div>
-        <script src="/public/jsbundle/bundle.js"></script>
+        <div class="menu-container">
+          <input type="text" placeholder="Enter name...">
+            <form id="create-session-form" action="/create-game" method="POST">
+              <button type="submit">Create Game</button>
+            </form>
+        </div>
+        <script src="/jsbundle/bundle.js"></script>
     </body>
 </html>
-
-<!-- Wide header -->
-<!-- Move History Chess Upper Timer -->
-<!-- Move History Chess Lower Timer -->
-<!-- Move History Menu Powerup -->
