@@ -49,9 +49,7 @@ export class Board
         // Create the PixiJS application and pass in the options directly
         await this.App.init({
             backgroundColor: 0x1099bb,  // Optional background color: Handy to have, it indicates if we're rendering something incorrectly
-            // resizeTo: container,
-            width: 600,
-            height: 600
+            resizeTo: this.Container,
         });
 
         this.Container.appendChild(this.App.canvas);
@@ -59,7 +57,7 @@ export class Board
 
     public async draw(): Promise<void> { // Iterate over all squares, calling their draw() method.
         const square_size = Math.min(this.Container.clientWidth, this.Container.clientHeight) / this.Size; //Math.min(this.App.view.width, this.App.view.height) / this.Size;
-
+        console.log(this.Container.clientHeight, this.Container.clientWidth);
         for (let row = 0; row < this.Size; row++) {
             for (let col = 0; col < this.Size; col++) {
                 this.Squares[row][col].draw(this.App, square_size, row, col);
