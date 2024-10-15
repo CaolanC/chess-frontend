@@ -1,6 +1,6 @@
 import { Board } from './ChessFrontend';
 
-const board_size = 26;
+const board_size = 8;
 const parent_container_id = 'game-container'
 const parent_container = document.getElementById(parent_container_id);
 
