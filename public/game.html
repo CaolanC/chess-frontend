@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width", initial-scale="1.0">
+        <title>2D Chess Renderer</title>
+        <link rel="stylesheet" href="/css/style.css">
+    </head>
+    <body>
+        <div id="chessplusplus-container">
+            <div class="abilities">
+                <button>FORFEIT</button>
+                <button>DETONATE</button>
+                <button>CASTLE</button>
+            </div>
+            <div class="move-history">
+                <h2>KE-E2</h2>
+            </div>
+            <div id="game-container">
+            </div>
+            <div class="timer-container">
+                <div class="timer top-timer">
+                    <h3>Opponent Timer</h3>
+                    <h2>10:37</h2>
+                </div>
+                <div class="timer bottom-timer">
+                    <h3>Your Timer</h3>
+                    <h2>01:03</h2>
+                </div>
+            </div>
+            <div class="powerup">
+                <h2>Powerup</h2>
+                <h3>(Item)</h3>
+            </div>
+        </div>
+        <div class="menu-container">
+          <input type="text" placeholder="Enter name...">
+            <form id="create-session-form" action="/create-game" method="POST">
+              <button type="submit">Create Game</button>
+            </form>
+        </div>
+        <script src="/jsbundle/bundle.js"></script>
+    </body>
+</html>
