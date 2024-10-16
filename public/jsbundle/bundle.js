@@ -71,7 +71,7 @@ eval("\nvar __createBinding = (this && this.__createBinding) || (Object.create ?
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nconst ChessFrontend_1 = __webpack_require__(/*! ./ChessFrontend */ \"./dist/ChessFrontend/index.js\");\nconst board_size = 26;\nconst parent_container_id = 'game-container';\nconst parent_container = document.getElementById(parent_container_id);\nif (!parent_container) {\n    throw new Error(`Parent container '${parent_container_id}' not found.`);\n}\nconst board = new ChessFrontend_1.Board(board_size, parent_container, [0xf7faf9, 0x1c1c1c]);\nboard.initApp();\nboard.draw();\n\n\n//# sourceURL=webpack://2d/./dist/index.js?");
+eval("\nObject.defineProperty(exports, \"__esModule\", ({ value: true }));\nconst ChessFrontend_1 = __webpack_require__(/*! ./ChessFrontend */ \"./dist/ChessFrontend/index.js\");\nconst board_size = 8;\nconst parent_container_id = 'game-container';\nconst parent_container = document.getElementById(parent_container_id);\nif (!parent_container) {\n    throw new Error(`Parent container '${parent_container_id}' not found.`);\n}\nconst board = new ChessFrontend_1.Board(board_size, parent_container, [0xf7faf9, 0x1c1c1c]);\nboard.initApp();\nboard.draw();\n\n\n//# sourceURL=webpack://2d/./dist/index.js?");
 
 /***/ }),
 
