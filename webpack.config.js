@@ -7,5 +7,5 @@ module.exports = {
     path: path.resolve(__dirname, './public/jsbundle'),
   },
   mode: 'development',  // Use 'production' for production builds,
-  watch: true
+  watch: false
 };
