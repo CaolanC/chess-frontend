@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "init": "npm run install && npm run build && npm run sass:build",
     "build": "$(tsc & webpack)",
     "sass:watch": "sass --watch ./public/scss:./public/css",
     "sass:build": "sass ./public/scss:./public/css",
