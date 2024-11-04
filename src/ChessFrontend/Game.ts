@@ -1,11 +1,9 @@
 import { Piece } from './Piece';
 import { Board } from './Board';
 
-namespace ChessFrontend 
-{
-
 type PieceID = string;
 type PieceSetIDs = string[];
+
 enum StandardPiece {
     Rook = 1,
     Knight = 2,
@@ -18,20 +16,17 @@ enum StandardPiece {
 export class FenParser {
 
     public readonly FenIDBoard: string[][];
-    
+
     public constructor(fen_string: string) {
-        let new_string: string[][] = this._parseFen(fen_string);
-
-        this.FenIDBoard = new_string;
-
+        this.FenIDBoard = this._parseFen(fen_string);
     }
 
     private _parseFen(fen_string: string): string[][] {
+        // TODO: Implement the FEN parsing logic here
         let fen: string[][] = [];
         return fen;
     }
 }
-
 
 export class GameStateRegistry {
 
@@ -39,18 +34,19 @@ export class GameStateRegistry {
     public readonly Board: Board;
 
     constructor(board: Board, possible_pieces: StandardPiece[]) {
-        this.PossiblePieces = this._stdPiecesToPieceSetIDs(possible_pieces); 
+        this.PossiblePieces = this._stdPiecesToPieceSetIDs(possible_pieces);
         this.Board = board;
     }
 
     private _stdPiecesToPieceSetIDs(std_pieces: StandardPiece[]): PieceSetIDs {
-         
+        // Convert StandardPiece array to PieceSetIDs array
+        return std_pieces.map(piece => this._stdPieceToPieceId(piece));
     }
 
-    private _stdPieceToPieceId(std_piece: StandardPiece): PieceSetIDs {
-        
+    private _stdPieceToPieceId(std_piece: StandardPiece): PieceID {
+        // Convert each StandardPiece enum to a corresponding PieceID (assuming a simple mapping here)
+        return `piece-${StandardPiece[std_piece]}`; // e.g., "piece-Rook"
     }
-
 }
 
 export class Game {
@@ -58,22 +54,22 @@ export class Game {
     public readonly Board: Board;
     public readonly Registry: GameStateRegistry;
 
-    constructor(board: Board, pieces: StandardPiece[]=this._getDefaultSet()) {
+    constructor(board: Board, pieces: StandardPiece[] = Game.getDefaultSet()) {
         this.Board = board;
         this.Registry = new GameStateRegistry(this.Board, pieces);
     }
 
-    private _getDefaultSet(): StandardPiece[] {
-
-        let piece_set: StandardPiece[] = [];
-
-        for (let piece in StandardPiece) {
-            piece_set.add(piece);
-        }
-
-        return piece_set;
-        
+    private static getDefaultSet(): StandardPiece[] {
+        return [
+            StandardPiece.Rook,
+            StandardPiece.Knight,
+            StandardPiece.Bishop,
+            StandardPiece.Queen,
+            StandardPiece.King,
+            StandardPiece.Bishop,
+            StandardPiece.Knight,
+            StandardPiece.Rook,
+            StandardPiece.Pawn,
+        ];
     }
-}
-
 }
