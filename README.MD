@@ -10,8 +10,8 @@ Then it's as simple as `live-server` and it should launch the server on a localh
 ### Documentation
 
 These are in order of how I'd suggest you read them.
-[Square](docs/Square.md)
-[Piece](docs/Piece.md)
-[Board](docs/Board.md)
-[Game](docs/Game.md)
-[Overview](docs/ProjectOverview.md.md)
+- [Square](docs/Square.md)
+- [Piece](docs/Piece.md)
+- [Board](docs/Board.md)
+- [Game](docs/Game.md)
+- [Overview](docs/ProjectOverview.md.md)
