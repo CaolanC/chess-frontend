@@ -1,5 +1,6 @@
-import { Application, Graphics } from 'pixi.js';
+import { Application, Assets, Graphics, Sprite } from 'pixi.js';
 import { Square } from './Square';
+import { Piece } from './Piece';
 
 export class Board 
 {
@@ -7,6 +8,7 @@ export class Board
     public readonly Size: number;
     protected DefaultColors: [number, number];
     protected Squares: Square[][];
+    protected Pieces: Piece[][];
     protected readonly App: Application = new Application();
 
     constructor(
@@ -20,6 +22,7 @@ export class Board
         this.Container = container;
         this.DefaultColors = default_colors;
         this.Squares = this._EmptyBoard();
+        this.Pieces = this._PopulatePieces();
     }
 
     protected _EmptyBoard(): Square[][] { // Returns a 2d array equal to the Board's size filled with null values
@@ -36,13 +39,40 @@ export class Board
                 if ((row + col) % 2) {
                     color = this.DefaultColors[1];
                 }
-
+                
                 squares[row].push(new Square([row, col], color));
+                
             }
         }
 
         return squares;
     }
+    
+    protected _PopulatePieces(): Piece[][] { 
+        const pieces: Piece[][] = [];
+
+        for(let col = 0; col < this.Size; col++) {
+            pieces.push([]);
+            for(let row = 0; row < this.Size; row++) {
+                
+                if (row == 0 || row == 1) {
+                    pieces[col].push(new Piece(false, "p"));
+                }
+                else if (row == 6 || row == 7) {
+                    pieces[col].push(new Piece(true,"P"));
+                }
+                else {
+                    pieces[col].push(new Piece(true, ""));
+                }
+            }
+        }
+
+        return pieces;
+    
+    }
+
+
+
 
     public async initApp(): Promise<void> 
     {
@@ -51,16 +81,20 @@ export class Board
             backgroundColor: 0x1099bb,  // Optional background color: Handy to have, it indicates if we're rendering something incorrectly
             resizeTo: this.Container,
         });
-
         this.Container.appendChild(this.App.canvas);
+        
     }
 
     public async draw(): Promise<void> { // Iterate over all squares, calling their draw() method.
         const square_size = Math.min(this.Container.clientWidth, this.Container.clientHeight) / this.Size; //Math.min(this.App.view.width, this.App.view.height) / this.Size;
         console.log(this.Container.clientHeight, this.Container.clientWidth);
+        // TBA TBA Assets.load("/images/pawn-chess-piece-dfa935.png"); TBA ____________
         for (let row = 0; row < this.Size; row++) {
             for (let col = 0; col < this.Size; col++) {
-                this.Squares[row][col].draw(this.App, square_size, row, col);
+                
+                this.Squares[row][col].draw(this.App, square_size, row, col, this.Pieces[row][col]);
+                this.Pieces[row][col].drawPiece(this.App, square_size, row, col);
+                
             }
         }
     }

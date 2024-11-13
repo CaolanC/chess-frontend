@@ -1,4 +1,4 @@
-import { Game, Board } from './ChessFrontend';
+import { Game, Board, Square } from './ChessFrontend';
 
 const board_size = 8;
 const parent_container_id = 'game-container';
@@ -15,6 +15,5 @@ let colors: [number, number] = [0x8FA3FF, 0xF27C42];
 let board: Board = new Board(board_size, parent_container, colors);
 board.initApp();
 board.draw();
-
 // Provide necessary arguments for Game
 let game: Game = new Game(board);
