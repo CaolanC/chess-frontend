@@ -58,7 +58,7 @@ export class Game {
         this.Board = board;
         this.Registry = new GameStateRegistry(this.Board, pieces);
     }
-
+    
     private static getDefaultSet(): StandardPiece[] {
         return [
             StandardPiece.Rook,
