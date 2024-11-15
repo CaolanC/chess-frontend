@@ -91,11 +91,8 @@ export class Board
                 if (string != null) {
                     // 7 - col flips board upsidedown to render properly (for white side).
                     squares[7 - col][7 - row].addPiece(new Piece(string));
-                    console.log(squares[7 - col][7 - row].Piece?.piece);
                 }
-                else {
-                    console.log("Is null!");
-                }
+
             }
         }
         
