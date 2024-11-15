@@ -1,5 +1,6 @@
 import { Piece } from './Piece';
 import { Board } from './Board';
+import { json } from 'stream/consumers';
 
 type PieceID = string;
 type PieceSetIDs = string[];
@@ -13,20 +14,6 @@ enum StandardPiece {
     Pawn = 6
 }
 
-export class FenParser {
-
-    public readonly FenIDBoard: string[][];
-
-    public constructor(fen_string: string) {
-        this.FenIDBoard = this._parseFen(fen_string);
-    }
-
-    private _parseFen(fen_string: string): string[][] {
-        // TODO: Implement the FEN parsing logic here
-        let fen: string[][] = [];
-        return fen;
-    }
-}
 
 export class GameStateRegistry {
 
@@ -58,7 +45,7 @@ export class Game {
         this.Board = board;
         this.Registry = new GameStateRegistry(this.Board, pieces);
     }
-
+    
     private static getDefaultSet(): StandardPiece[] {
         return [
             StandardPiece.Rook,
@@ -72,4 +59,23 @@ export class Game {
             StandardPiece.Pawn,
         ];
     }
+}
+
+export class Requests {
+
+    constructor(){} // empty constructor
+
+    public async getPieces(): Promise<string[][]> {
+        
+        let pieces: string[][] = [];
+        const url = window.location.href;
+    
+        const response = await fetch(url + "/board");
+        pieces = await response.json();
+    
+        return pieces;
+    }
+
+
+
 }
