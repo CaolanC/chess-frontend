@@ -33,15 +33,18 @@ import { Application, Graphics, roundPixelsBit, Sprite, HTMLText } from "pixi.js
 
 export class Piece {
 
-    iswhite : boolean;  // this is to help with the FEN string population
     piece : string;   // this is to be changed with a sprite at some point, text for now
     text : HTMLText; // the rendered text 
 
-    constructor(iswhite : boolean, piece : string) {
-        this.iswhite = iswhite;
+    protected _isBlack(piece : string) {         // checks if its lowercase(black)
+        return piece === piece.toLowerCase() &&
+        piece !== piece.toUpperCase();  
+    }
+
+    constructor(piece : string) {
         this.piece = piece;
 
-        if (iswhite == true) {
+        if (this._isBlack(piece) == false) {
         this.text = new HTMLText({
             text: piece,
             style: {
@@ -65,26 +68,16 @@ export class Piece {
         }
     } 
 
-
-
     public drawPiece(app: Application, square_size: number, row: number, col: number) {
         
-        // Sprite Experiments, TBA 2070
-        //const sprite = Sprite.from("/images/pawn-chess-piece-dfa935.png");
         this.text.x = (square_size * row) + 50;
         this.text.y = square_size * col;
 
         app.stage.addChild(this.text);
-
     }
 
     public ReRender(app: Application) {
         app.stage.addChild(this.text);
     }
 
-
-    // the piece will be spawned in by the board, fed in its position and then drawn using draw()
-    // it will be fed in using FEN notation
-    // to add: movement...how will that be done, perhaps rerendering the pieces again? easiest option but costly
-    // but fuck it no time lads
 }

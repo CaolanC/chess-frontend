@@ -1,5 +1,5 @@
 import { Board } from "./Board";
-import { SquareUIState, Position } from "./Utils";
+import { SquareUIState, Position, ColumnTranslate, RowTranslate } from "./Utils";
 import { Piece } from "./Piece";
 import { Application, Graphics, roundPixelsBit, Sprite, HTMLText } from "pixi.js";
 
@@ -12,6 +12,8 @@ export class Square // Represents a square in the board
     protected Graphic: Graphics = new Graphics();
     protected HoverColor: number = 0xAAAAAA;
 
+
+
     constructor(
             position: Position,
             default_color: number
@@ -21,18 +23,18 @@ export class Square // Represents a square in the board
         this.DefaultColor = default_color;
     }
 
+    public addPiece(piece : Piece ) {
+        this.Piece = piece;
+    }
+
     public draw( // Squares are responsible for drawing themselves. The board iterates over all squares calling this method.
         app: Application,
         square_size: number,
         row: number,
         col: number,
-        piece : Piece // added this due to hover problems. Sends a message to the piece over it to rerender once hover is off
+        piece?: Piece,
     ): void {
         
-        
-        // Sprite Experiments, TBA 2070
-        //const sprite = Sprite.from("/images/pawn-chess-piece-dfa935.png");
-        //sprite.anchor.set(0.5);
 
         this.Graphic.rect(square_size * row, square_size * col, square_size, square_size).fill(this.DefaultColor);
         
@@ -44,13 +46,26 @@ export class Square // Represents a square in the board
         this.Graphic.on("pointermove", (event) => { 
             this.Graphic.rect(square_size * row, square_size * col, square_size, square_size).fill(this.HoverColor);
             app.stage.addChild(this.Graphic);
-            piece.ReRender(app); // also a hack, pieces would randomly dissapear if this isn't here.
+            piece?.ReRender(app); // also a hack, pieces would randomly dissapear if this isn't here.
         })
         this.Graphic.on("pointerleave", (event) => {
             this.Graphic.rect(square_size * row, square_size * col, square_size, square_size).fill(this.DefaultColor);
             app.stage.addChild(this.Graphic);
-            piece.ReRender(app); // pure hack to get piece to rerender after hover off square
+            piece?.ReRender(app); // pure hack to get piece to rerender after hover off square
         })
         
+
+        // click implementation
+        // the translate arrays help translate our square arrays into movements
+        // to be sent to Niall. 
+
+        // I know the indexing is confusing...its 5:30 I aint sure how to fix it
+        // but this works
+
+        this.Graphic.on("click", (event) => {
+            console.log("row = " + RowTranslate[col]);
+            console.log("col = " + ColumnTranslate[row]);
+        })
+
     }
 }

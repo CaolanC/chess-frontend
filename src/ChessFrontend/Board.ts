@@ -2,6 +2,8 @@ import { Application, Assets, Graphics, Sprite } from 'pixi.js';
 import { Square } from './Square';
 import { Piece } from './Piece';
 import {  rotate180 } from "2d-array-rotation";
+import { Requests } from "./Game";
+import { cp } from 'fs';
 
 export class Board 
 {
@@ -9,7 +11,7 @@ export class Board
     public readonly Size: number;
     protected DefaultColors: [number, number];
     protected Squares: Square[][];
-    protected Pieces: Piece[][];
+    protected requests = new Requests();
     protected readonly App: Application = new Application();
 
     constructor(
@@ -23,7 +25,6 @@ export class Board
         this.Container = container;
         this.DefaultColors = default_colors;
         this.Squares = this._EmptyBoard();
-        this.Pieces = this._PopulatePieces();
     }
 
     protected _EmptyBoard(): Square[][] { // Returns a 2d array equal to the Board's size filled with null values
@@ -49,62 +50,56 @@ export class Board
         return squares;
     }
     
-    // protected _PopulatePieces(): Piece[][] { 
-    //     const pieces: Piece[][] = [];
 
-    //     for(let col = 0; col < this.Size; col++) {
-    //         pieces.push([]);
-    //         for(let row = 0; row < this.Size; row++) {
-                
-    //             if (row == 0 || row == 1) {
-    //                 pieces[col].push(new Piece(false, "p"));
-    //             }
-    //             else if (row == 6 || row == 7) {
-    //                 pieces[col].push(new Piece(true,"P"));
-    //             }
-    //             else {
-    //                 pieces[col].push(new Piece(true, ""));
-    //             }
-    //         }
-    //     }
-    //     console.log(pieces);
-    //     return pieces;
+
+    /*
+    TODO:
+    0. Call info endpoint to figure out if black or white. -- not implemented yet
+    1. Do code that moves pieces around (can be hardcoded)
+    3. Send a move.
+            When the opponent makes a move, you need to update the other sides client as well by poking their
+            endpoint.
+            Tells them to get the status again.
+    4. Request the new board upon valid move.
+
+    https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
     
-    // }
+    http request /board
+    http request /moves?square=a2
 
-    protected _PopulatePieces(): Piece[][] { 
-        const pieces: Piece[][] = [];
+    to send made move
+            move = {
+        from: "a2",
+        to: "a4",
+        promotion: "q" // optional, only used for pawn promotion
+        }
+    
+    if i get the reply that its all good, fetch a new board with the updated states
+
+    */
+
+
+    protected async _PopulateBoard(squares : Square[][]) { 
+
+        const pieces = await this.requests.getPieces();
 
         for(let row = 0; row < this.Size; row++) {
-            pieces.push([]);
             for(let col = 0; col < this.Size; col++) {
                 
-                if (row == 0 || row == 1) {
-                    pieces[row].push(new Piece(false, "p"));
-                }
-                else if (row == 6 || row == 7) {
-                    pieces[row].push(new Piece(true,"P"));
+                var string = pieces[row][col];
+                
+                if (string != null) {
+                    // 7 - col flips board upsidedown to render properly.
+                    squares[7 - col][7 - row].addPiece(new Piece(string));
+                    console.log(squares[7 - col][7 - row].Piece?.piece);
                 }
                 else {
-                    pieces[row].push(new Piece(true, ""));
+                    console.log("Is null!");
                 }
             }
         }
-        return pieces;
-    
+        
     }
-
-    isBlack() : boolean {
-        var cookie = document.cookie.split("=");
-        if (cookie[0] == "black") {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-
 
 
     public async initApp(): Promise<void> 
@@ -120,21 +115,23 @@ export class Board
 
     public async draw(): Promise<void> { // Iterate over all squares, calling their draw() method.
         
-        if (this.isBlack() == true) {
-            this.Pieces = rotate180(this.Pieces);
-            console.log(this.Pieces);
-        }
-
-
+        await this._PopulateBoard(this.Squares);
 
         const square_size = Math.min(this.Container.clientWidth, this.Container.clientHeight) / this.Size; //Math.min(this.App.view.width, this.App.view.height) / this.Size;
-        console.log(this.Container.clientHeight, this.Container.clientWidth);
-        // TBA TBA Assets.load("/images/pawn-chess-piece-dfa935.png"); TBA ____________
+        //console.log(this.Container.clientHeight, this.Container.clientWidth);
+        
         for (let row = 0; row < this.Size; row++) {
             for (let col = 0; col < this.Size; col++) {
-            
-                this.Squares[row][col].draw(this.App, square_size, row, col, this.Pieces[col][row]);
-                this.Pieces[col][row].drawPiece(this.App, square_size, row, col);
+                
+                const piece = this.Squares[row][col].Piece;
+                if (piece != null) { 
+                    this.Squares[row][col].draw(this.App, square_size, row, col, piece);
+                } // this code autoupdates the piece when hover is on and off
+                else {
+                    this.Squares[row][col].draw(this.App, square_size, row, col);
+                }
+                piece?.drawPiece(this.App, square_size, row, col);
+
 
                 
             }
