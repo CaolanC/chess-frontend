@@ -6,7 +6,6 @@
     "token": "node ../dev-scripts/generate_secret_token.js"
   },
   "dependencies": {
-    "2d-array-rotation": "^2.1.1",
     "install": "^0.13.0",
     "npm": "^10.9.0",
     "pixi.js": "^8.3.4",

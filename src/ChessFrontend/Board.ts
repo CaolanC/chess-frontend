@@ -1,7 +1,6 @@
 import { Application, Assets, Graphics, Sprite } from 'pixi.js';
 import { Square } from './Square';
 import { Piece } from './Piece';
-import {  rotate180 } from "2d-array-rotation";
 import { Requests } from "./Game";
 import { cp } from 'fs';
 
@@ -111,11 +110,8 @@ export class Board
     }
 
     public async draw(): Promise<void> { // Iterate over all squares, calling their draw() method.
-        
-        await this._PopulateBoard(this.Squares);
 
         const square_size = Math.min(this.Container.clientWidth, this.Container.clientHeight) / this.Size; //Math.min(this.App.view.width, this.App.view.height) / this.Size;
-        
         
         for (let row = 0; row < this.Size; row++) {
             for (let col = 0; col < this.Size; col++) {
