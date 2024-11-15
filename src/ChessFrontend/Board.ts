@@ -89,8 +89,8 @@ export class Board
                 var string = pieces[row][col];
                 
                 if (string != null) {
-                    // 7 - col flips board upsidedown to render properly (for white side).
-                    squares[7 - col][7 - row].addPiece(new Piece(string));
+                    // 7 - row flips board upsidedown to render properly (for white side).
+                    squares[col][7 - row].addPiece(new Piece(string));
                 }
 
             }
