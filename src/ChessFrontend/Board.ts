@@ -89,7 +89,7 @@ export class Board
                 var string = pieces[row][col];
                 
                 if (string != null) {
-                    // 7 - col flips board upsidedown to render properly.
+                    // 7 - col flips board upsidedown to render properly (for white side).
                     squares[7 - col][7 - row].addPiece(new Piece(string));
                     console.log(squares[7 - col][7 - row].Piece?.piece);
                 }
@@ -118,7 +118,7 @@ export class Board
         await this._PopulateBoard(this.Squares);
 
         const square_size = Math.min(this.Container.clientWidth, this.Container.clientHeight) / this.Size; //Math.min(this.App.view.width, this.App.view.height) / this.Size;
-        //console.log(this.Container.clientHeight, this.Container.clientWidth);
+        
         
         for (let row = 0; row < this.Size; row++) {
             for (let col = 0; col < this.Size; col++) {
@@ -131,6 +131,8 @@ export class Board
                     this.Squares[row][col].draw(this.App, square_size, row, col);
                 }
                 piece?.drawPiece(this.App, square_size, row, col);
+
+                this.Squares[row][col].movePiece(row, col);
 
 
                 

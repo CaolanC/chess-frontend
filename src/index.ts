@@ -1,3 +1,4 @@
+import { squaredDistanceToLineSegment } from 'pixi.js';
 import { Game, Board, Square } from './ChessFrontend';
 
 const board_size = 8;

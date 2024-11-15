@@ -13,7 +13,6 @@ export class Square // Represents a square in the board
     protected HoverColor: number = 0xAAAAAA;
 
 
-
     constructor(
             position: Position,
             default_color: number
@@ -23,9 +22,25 @@ export class Square // Represents a square in the board
         this.DefaultColor = default_color;
     }
 
+    protected _pieceExists() : boolean {
+        return this.Piece != null
+    }
+
     public addPiece(piece : Piece ) {
         this.Piece = piece;
     }
+
+    public movePiece(col : number , row : number) {
+
+        // row translation layer translates our array into chess notation.
+        this.Graphic.on("click", (event) => {
+            if (this._pieceExists()) {
+                console.log("row = " + RowTranslate[row]);
+                console.log("col = " + ColumnTranslate[col]);
+            }
+        })
+    }
+
 
     public draw( // Squares are responsible for drawing themselves. The board iterates over all squares calling this method.
         app: Application,
@@ -55,17 +70,8 @@ export class Square // Represents a square in the board
         })
         
 
-        // click implementation
-        // the translate arrays help translate our square arrays into movements
-        // to be sent to Niall. 
 
-        // I know the indexing is confusing...its 5:30 I aint sure how to fix it
-        // but this works
 
-        this.Graphic.on("click", (event) => {
-            console.log("row = " + RowTranslate[col]);
-            console.log("col = " + ColumnTranslate[row]);
-        })
 
     }
 }
