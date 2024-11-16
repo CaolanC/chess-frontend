@@ -1,6 +1,6 @@
-export * from './Board';
-export * from './Square';
-export * from './Piece';
-export * from './Utils';
-export * from './Game';
+export * from './Board.js';
+export * from './Square.js';
+export * from './Piece.js';
+export * from './Utils.js';
+export * from './Game.js';
 

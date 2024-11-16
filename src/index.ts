@@ -1,5 +1,4 @@
-import { squaredDistanceToLineSegment } from 'pixi.js';
-import { Game, Board, Square } from './ChessFrontend';
+import { Game, Board, Square } from './ChessFrontend/index.js';
 
 const board_size = 8;
 const parent_container_id = 'game-container';
@@ -10,7 +9,7 @@ if (!parent_container) {
 }
 
 // Fixes the color array syntax error
-let colors: [number, number] = [0x8FA3FF, 0xF27C42];
+let colors: [number, number] = [0xf8eac9, 0xb27c66];
 
 // Ensure Board is instantiated correctly
 let board: Board = new Board(board_size, parent_container, colors);
