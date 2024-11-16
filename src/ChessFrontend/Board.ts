@@ -78,9 +78,7 @@ export class Board
     */
 
 
-    protected async _PopulateBoard(squares : Square[][]) { 
-
-        const pieces = await this.requests.getPieces();
+    public PopulateBoard(pieces: (string | null)[][]) { 
 
         for(let row = 0; row < this.Size; row++) {
             for(let col = 0; col < this.Size; col++) {
@@ -89,7 +87,7 @@ export class Board
                 
                 if (string != null) {
                     // 7 - row flips board upsidedown to render properly (for white side).
-                    squares[col][7 - row].addPiece(new Piece(string));
+                    this.Squares[col][7 - row].addPiece(new Piece(string));
                 }
 
             }
@@ -123,7 +121,7 @@ export class Board
                 else {
                     this.Squares[row][col].draw(this.App, square_size, row, col);
                 }
-                piece?.drawPiece(this.App, square_size, row, col);
+                piece?.draw(this.App, square_size, row, col);
 
                 this.Squares[row][col].movePiece(row, col);
 

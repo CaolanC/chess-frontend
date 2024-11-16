@@ -14,19 +14,51 @@ enum StandardPiece {
     Pawn = 6
 }
 
+interface ID {
+    id: string,
+    started: boolean
+}
+
+type BoardRep = (string | null)[][];
+
 export class Game {
 
     public readonly Board: Board;
+    private room_id: string | undefined;
 
     constructor(board: Board, pieces: StandardPiece[] = Game.getDefaultSet()) {
         this.Board = board;
+        this.Board.initApp();
+        this.Board.draw();
     }
 
-    public startGameLoop() {
-        const event_source = new EventSource('/events');
+    public async startGameLoop() {
+        this.room_id = await this.gameReady(); 
+        console.log("started");
+        const event_source = new EventSource(`${window.location.pathname}/events`);
+
+        // for(;;) {
+        let board_rep: BoardRep = await fetch(`${window.location.pathname}/board`).then(res => res.json());
+        this.Board.PopulateBoard(board_rep);
+        this.Board.draw();
+
+        // }
+    }
+
+    public async gameReady() {
+        let res: ID;
+        while (true) {
+            res = await fetch(`${window.location.pathname}/id`)
+            .then(res => res.json());
+            if (res.started) {
+                break;
+            }
+        }
+
+        return res.id;
     }
     
-    private static getDefaultSet(): StandardPiece[] {
+    private static getDefaultSet(): StandardPiece[] {   
         return [
             StandardPiece.Rook,
             StandardPiece.Knight,

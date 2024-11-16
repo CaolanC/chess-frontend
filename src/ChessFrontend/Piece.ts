@@ -68,10 +68,10 @@ export class Piece {
         }
     } 
 
-    public drawPiece(app: Application, square_size: number, row: number, col: number) {
+    public draw(app: Application, square_size: number, row: number, col: number) {
         
-        this.text.x = (square_size * row) + 50;
-        this.text.y = square_size * col;
+        this.text.x = (square_size * row);
+        this.text.y = (square_size * col) - (square_size / 2);
 
         app.stage.addChild(this.text);
     }

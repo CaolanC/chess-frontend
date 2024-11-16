@@ -14,7 +14,9 @@ let colors: [number, number] = [0x8FA3FF, 0xF27C42];
 
 // Ensure Board is instantiated correctly
 let board: Board = new Board(board_size, parent_container, colors);
-board.initApp();
-board.draw();
+// board.initApp();
+// board.draw();
 // Provide necessary arguments for Game
 let game: Game = new Game(board);
+
+game.startGameLoop();
