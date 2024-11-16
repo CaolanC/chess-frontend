@@ -13,12 +13,10 @@
             <button type="submit">Create Game</button>
         </form>
     </div>
-    <div class="menu-container">
-        <form id="set-name-form" method="GET">
-            <input type="text" name="name" id="set-name" required placeholder="Enter name...">
-            <button type="submit">Set Name</button>
-        </form>
-    </div>
+    <form id="set-name-form" method="POST" action="/register">
+        <input type="text" id="set-name" name="username" placeholder="Enter your username" required />
+        <button type="submit">Register</button>
+    </form>
     <div class="menu-container">
         <form id="join-session-form" method="POST">
             <input type="text" name="room_id" id="join-session" required placeholder="Enter room ID...">
@@ -45,11 +43,26 @@
         const name_form = document.getElementById('set-name-form');
 
         name_form.addEventListener("submit", function(event) {
+
+            event.preventDefault();
             const name = document.getElementById('set-name').value;
 
-            form.action = `/register/${encodeURIComponent(name)}`
+            fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username: name })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status} - ${response.statusText}`);
+                }
+                return response.text();
+            })
+            .then(data => console.log(data)) // Logs "Username set" or "Username unset"
+            .catch(error => console.error(error));
 
-            form.submit();
         });
     </script>
 </body>
