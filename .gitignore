@@ -1,5 +1,5 @@
 ./public/bundle.js
-./public/jsbundle/*
+public/jsbundle/*
 node_modules
 dist/*
 node_modules
