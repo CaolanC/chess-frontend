@@ -14,9 +14,24 @@ enum StandardPiece {
     Pawn = 6
 }
 
+type Color = "w" | "b";
+
+interface Info {
+    color: Color,
+    opponent: string | null
+}
+
 interface ID {
     id: string,
     started: boolean
+}
+
+interface Status {
+    turn: {
+        color: Color,
+        bool: boolean
+    },
+    winner: Color | "-"
 }
 
 type BoardRep = (string | null)[][];
@@ -39,27 +54,53 @@ export class Game {
 
     public async startGameLoop() {
         this.Board.initDraw();
+        let id = await this.pingID();
+
+        while (!(id.started)) {
+            await this.waitForMessage();
+            id = await this.pingID();
+        }
+
+        let status = await this.pingStatus();
         let info = await this.pingInfo();
 
-        while (!(info.started)) {
-            await this.waitForMessage();
-            info = await this.pingInfo();
-        }
+        console.log(status.turn);
+        console.log(id)
+        console.log(info);
 
         // for(;;) {
         let board_rep: BoardRep = await fetch(`${window.location.pathname}/board`).then(res => res.json());
         this.Board.PopulateBoard(board_rep);
+
+        if (info.color == "b") { // TODO: Set-up logic, game loop incl moves, highlighting, castling, promotion, checkmate
+            this.Board.flip();
+            console.log("finna flip");
+        };
+
         this.Board.draw();
 
         // }
     }
 
-    public async pingInfo() : Promise<ID> {
-        let res: ID = await fetch(`${window.location.pathname}/id`)
-        .then(res => res.json());
-        
+    public async pingInfo() : Promise<Info> {
+        let info: Info = await fetch(`${window.location.pathname}/Info`)
+        .then(info => info.json());
 
-        return res;
+        return info;
+    }
+    
+    public async pingID() : Promise<ID> {
+        let id: ID = await fetch(`${window.location.pathname}/id`)
+        .then(id => id.json());
+
+        return id;
+    }
+    
+    public async pingStatus() : Promise<Status> {
+        let status = fetch(`${window.location.pathname}/status`)
+        .then(res => res.json());
+
+        return status;
     }
 
     private async waitForMessage() : Promise<any> {

@@ -28,6 +28,11 @@ export class Board
         this.Squares = this._EmptyBoard();
     }
 
+    public flip() {
+        this.Squares.reverse();
+        // [this.DefaultColors[0], this.DefaultColors[1]] = [this.DefaultColors[1], this.DefaultColors[0]];
+    }
+
     public PopulateBoard(pieces: (string | null)[][]) { 
 
         for(let row = 0; row < this.Size; row++) {
