@@ -1,8 +1,10 @@
-import { Application, Assets, Graphics, Sprite } from 'pixi.js';
+import { Application, Assets, Graphics, Sprite, Loader } from 'pixi.js';
 import { Square } from './Square';
 import { Piece } from './Piece';
 import { Requests } from "./Game";
 import { cp } from 'fs';
+
+
 
 export class Board 
 {
@@ -24,6 +26,28 @@ export class Board
         this.Container = container;
         this.DefaultColors = default_colors;
         this.Squares = this._EmptyBoard();
+    }
+
+    public PopulateBoard(pieces: (string | null)[][]) { 
+
+        for(let row = 0; row < this.Size; row++) {
+            for(let col = 0; col < this.Size; col++) {
+                
+                var string = pieces[row][col];
+                
+                if (string != null) {
+                    // 7 - row flips board upsidedown to render properly (for white side).
+                    let new_piece = this._charToPiece(string);
+                    this.Squares[row][7 - col].addPiece(new_piece);
+                }
+
+            }
+        }
+        
+    }
+
+    protected _charToPiece(char: string) : Piece {
+        return new Piece(char);
     }
 
     protected _EmptyBoard(): Square[][] { // Returns a 2d array equal to the Board's size filled with null values
@@ -48,8 +72,38 @@ export class Board
 
         return squares;
     }
-    
 
+    public async initApp(): Promise<void> 
+    {
+        // Create the PixiJS application and pass in the options directly
+        await this.App.init({
+            backgroundColor: 0x1099bb,  // Optional background color: Handy to have, it indicates if we're rendering something incorrectly
+            resizeTo: this.Container,
+        });
+        this.Container.appendChild(this.App.canvas);
+    }
+
+    public initDraw() {
+        const square_size = Math.min(this.Container.clientWidth, this.Container.clientHeight) / this.Size; //Math.min(this.App.view.width, this.App.view.height) / this.Size;
+        
+        for (let row = 0; row < this.Size; row++) {
+            for (let col = 0; col < this.Size; col++) {
+                this.Squares[row][col].initDraw(this.App, square_size, row, col);
+            }
+        }  
+    }
+
+    public draw(): void { // Iterate over all squares, calling their draw() method.
+
+        const square_size = Math.min(this.Container.clientWidth, this.Container.clientHeight) / this.Size; //Math.min(this.App.view.width, this.App.view.height) / this.Size;
+        
+        for (let row = 0; row < this.Size; row++) {
+            for (let col = 0; col < this.Size; col++) {
+                this.Squares[row][col].draw(this.App, square_size, row, col);
+            }
+        }
+    }
+}
 
     /*
     TODO:
@@ -76,58 +130,3 @@ export class Board
     if i get the reply that its all good, fetch a new board with the updated states
 
     */
-
-
-    public PopulateBoard(pieces: (string | null)[][]) { 
-
-        for(let row = 0; row < this.Size; row++) {
-            for(let col = 0; col < this.Size; col++) {
-                
-                var string = pieces[row][col];
-                
-                if (string != null) {
-                    // 7 - row flips board upsidedown to render properly (for white side).
-                    this.Squares[col][7 - row].addPiece(new Piece(string));
-                }
-
-            }
-        }
-        
-    }
-
-
-    public async initApp(): Promise<void> 
-    {
-        // Create the PixiJS application and pass in the options directly
-        await this.App.init({
-            backgroundColor: 0x1099bb,  // Optional background color: Handy to have, it indicates if we're rendering something incorrectly
-            resizeTo: this.Container,
-        });
-        this.Container.appendChild(this.App.canvas);
-
-    }
-
-    public async draw(): Promise<void> { // Iterate over all squares, calling their draw() method.
-
-        const square_size = Math.min(this.Container.clientWidth, this.Container.clientHeight) / this.Size; //Math.min(this.App.view.width, this.App.view.height) / this.Size;
-        
-        for (let row = 0; row < this.Size; row++) {
-            for (let col = 0; col < this.Size; col++) {
-                
-                const piece = this.Squares[row][col].Piece;
-                if (piece != null) { 
-                    this.Squares[row][col].draw(this.App, square_size, row, col, piece);
-                } // this code autoupdates the piece when hover is on and off
-                else {
-                    this.Squares[row][col].draw(this.App, square_size, row, col);
-                }
-                piece?.draw(this.App, square_size, row, col);
-
-                this.Squares[row][col].movePiece(row, col);
-
-
-                
-            }
-        }
-    }
-}

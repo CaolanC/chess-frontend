@@ -41,37 +41,38 @@ export class Square // Represents a square in the board
         })
     }
 
+    public initDraw(
+        app: Application,
+        square_size: number,
+        row: number,
+        col: number,
+    ) {
+        this.Graphic.rect(square_size * row, square_size * col, square_size, square_size).fill(this.DefaultColor);
+        
+        this.Graphic.eventMode = "static";
+        app.stage.addChild(this.Graphic);
+    }
+
 
     public draw( // Squares are responsible for drawing themselves. The board iterates over all squares calling this method.
         app: Application,
         square_size: number,
         row: number,
         col: number,
-        piece?: Piece,
     ): void {
-        
-
-        this.Graphic.rect(square_size * row, square_size * col, square_size, square_size).fill(this.DefaultColor);
-        
-        this.Graphic.eventMode = "static";
-        app.stage.addChild(this.Graphic);
-        
+      
+        this.Piece?.draw(app, square_size, row, col);
 
         // hover implementation
-        this.Graphic.on("pointermove", (event) => { 
-            this.Graphic.rect(square_size * row, square_size * col, square_size, square_size).fill(this.HoverColor);
-            app.stage.addChild(this.Graphic);
-            piece?.ReRender(app); // also a hack, pieces would randomly dissapear if this isn't here.
-        })
-        this.Graphic.on("pointerleave", (event) => {
-            this.Graphic.rect(square_size * row, square_size * col, square_size, square_size).fill(this.DefaultColor);
-            app.stage.addChild(this.Graphic);
-            piece?.ReRender(app); // pure hack to get piece to rerender after hover off square
-        })
-        
-
-
-
-
+        // this.Graphic.on("pointermove", (event) => { 
+        //     this.Graphic.rect(square_size * row, square_size * col, square_size, square_size).fill(this.HoverColor);
+        //     app.stage.addChild(this.Graphic);
+        //     piece?.ReRender(app); // also a hack, pieces would randomly dissapear if this isn't here.
+        // })
+        // this.Graphic.on("pointerleave", (event) => {
+        //     this.Graphic.rect(square_size * row, square_size * col, square_size, square_size).fill(this.DefaultColor);
+        //     app.stage.addChild(this.Graphic);
+        //     piece?.ReRender(app); // pure hack to get piece to rerender after hover off square
+        // })
     }
 }

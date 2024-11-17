@@ -1,6 +1,57 @@
 import { Board } from './Board';
 import { Position } from './Utils';
-import { Application, Graphics, roundPixelsBit, Sprite, HTMLText } from "pixi.js";
+import { Application, Graphics, roundPixelsBit, Sprite, HTMLText, Assets } from "pixi.js";
+
+enum PieceImagePaths {
+    WhitePawn = "/images/pawn.svg",
+}
+
+export class Piece {
+
+    protected readonly image_path: string;
+
+    constructor(piece : string) {
+        this.image_path = '/images/' + piece + '.svg';
+    }
+
+    public getImagePath() : string {
+        return this.image_path;
+    }
+
+    public async draw(app: Application, square_size: number, row: number, col: number) {
+        try {
+            // Load the texture asynchronously
+            const texture = await Assets.load(this.image_path);
+    
+            // Create a sprite from the loaded texture
+            const sprite = new Sprite(texture);
+    
+            // Set the anchor point to the center
+            sprite.anchor.set(0.5);
+    
+            // Position the sprite at the center of the square
+            sprite.x = col * square_size + square_size / 2;
+            sprite.y = row * square_size + square_size / 2;
+
+            sprite.height = square_size;
+            sprite.width = square_size;
+    
+            // Add the sprite to the application's stage
+            app.stage.addChild(sprite);
+        } catch (error) {
+            console.error(`Failed to load texture from ${this.image_path}:`, error);
+        }
+    }
+
+    public ReRender(app: Application) {
+    }
+
+    protected _isBlack(piece : string) {         // checks if its lowercase(black)
+        return piece === piece.toLowerCase() &&
+        piece !== piece.toUpperCase();  
+    }
+
+}
 
 // CAOLANS OLD CODE, MAYBE REUSABLE
 
@@ -30,54 +81,3 @@ import { Application, Graphics, roundPixelsBit, Sprite, HTMLText } from "pixi.js
 //     }
 
 // }
-
-export class Piece {
-
-    piece : string;   // this is to be changed with a sprite at some point, text for now
-    text : HTMLText; // the rendered text 
-
-    protected _isBlack(piece : string) {         // checks if its lowercase(black)
-        return piece === piece.toLowerCase() &&
-        piece !== piece.toUpperCase();  
-    }
-
-    constructor(piece : string) {
-        this.piece = piece;
-
-        if (this._isBlack(piece) == false) {
-        this.text = new HTMLText({
-            text: piece,
-            style: {
-                fontFamily: 'Arial',
-                fontSize: 100,
-                fill: 0xFFFFFF,
-                align: 'center',
-            }
-        });
-        }
-        else {
-            this.text = new HTMLText({
-                text: piece,
-                style: {
-                    fontFamily: 'Arial',
-                    fontSize: 100,
-                    fill: 0x000000,
-                    align: 'center',
-                }
-            });
-        }
-    } 
-
-    public draw(app: Application, square_size: number, row: number, col: number) {
-        
-        this.text.x = (square_size * row);
-        this.text.y = (square_size * col) - (square_size / 2);
-
-        app.stage.addChild(this.text);
-    }
-
-    public ReRender(app: Application) {
-        app.stage.addChild(this.text);
-    }
-
-}
