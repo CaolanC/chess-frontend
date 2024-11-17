@@ -2,19 +2,20 @@ import { Application, Assets, Graphics, Sprite, Loader } from 'pixi.js';
 import { Square } from './Square';
 import { Piece } from './Piece';
 import { Requests } from "./Game";
-import { cp } from 'fs';
-
+import { Position } from "./Utils";
 
 
 export class Board 
 {
     public Container: HTMLElement;
     public readonly Size: number;
+    public turn: string = "w";
     protected DefaultColors: [number, number];
     protected Squares: Square[][];
     protected requests = new Requests();
     protected readonly App: Application = new Application();
-
+    protected moveResolver: ((move: { from: [number, number]; to: [number, number] }) => void) | null = null;
+    private clickPositions: [number, number][] = [];
     constructor(
             size: number,
             // squares: Square[][],
@@ -29,12 +30,13 @@ export class Board
     }
 
     public flip() {
+        this.Squares.map(a => a.reverse());
         this.Squares.reverse();
         // [this.DefaultColors[0], this.DefaultColors[1]] = [this.DefaultColors[1], this.DefaultColors[0]];
     }
 
     public PopulateBoard(pieces: (string | null)[][]) { 
-
+        this.clearBoard();
         for(let row = 0; row < this.Size; row++) {
             for(let col = 0; col < this.Size; col++) {
                 
@@ -55,23 +57,55 @@ export class Board
         return new Piece(char);
     }
 
-    protected _EmptyBoard(): Square[][] { // Returns a 2d array equal to the Board's size filled with null values
+    // Add this method
+    public awaitMove(): Promise<{ from: [number, number]; to: [number, number] }> {
+        return new Promise((resolve) => {
+            this.moveResolver = resolve; // Set resolver for the move
+        });
+    }
+
+    private handleSquareClick(position: [number, number]): void { // This is so much spaghetti, but tbh I'm so done with this.
+        if (this.clickPositions.length === 0) {
+            // First click: Select 'from_square'
+            this.clickPositions.push(position);
+            console.log("first click");
+            console.log(this.clickPositions);
+        } else if (this.clickPositions.length === 1) {
+            console.log(this.turn);
+            if (this.turn != this.Squares[position[0]][position[1]].Piece?.color) {
+                this.clickPositions.push(position);
+                console.log(this.clickPositions);
+                if (this.moveResolver) {
+                    console.log("move resolver");
+                    this.moveResolver({
+                        from: this.clickPositions[0],
+                        to: this.clickPositions[1],
+                    });
+                }
+            }
+        }
+            // this.moveResolver = null;
+    }
+
+    public clearBoard(): void {
+        this.Squares.map(a => a.map(b => b.Piece?.deleteSprite(this.App)));
+    }
+
+    // Update _EmptyBoard to register square clicks with Board
+    protected _EmptyBoard(): Square[][] {
 
         const squares: Square[][] = [];
         let color: number;
 
-        for(let row = 0; row < this.Size; row++) {
+        for (let row = 0; row < this.Size; row++) {
             squares.push([]);
-            for(let col = 0; col < this.Size; col++) {
-                
-                color = this.DefaultColors[0];
+            for (let col = 0; col < this.Size; col++) {
+                color = this.DefaultColors[(row + col) % 2];
+                const newSquare = new Square([row, col], color);
 
-                if ((row + col) % 2) {
-                    color = this.DefaultColors[1];
-                }
-                
-                squares[row].push(new Square([row, col], color));
-                
+                // Register the click handler to inform Board
+                newSquare.onClick((position: [number, number]) => this.handleSquareClick(position));
+                squares[row].push(newSquare);
             }
         }
 
@@ -98,13 +132,13 @@ export class Board
         }  
     }
 
-    public draw(): void { // Iterate over all squares, calling their draw() method.
+    public async draw(): Promise<void> { // Iterate over all squares, calling their draw() method.
 
         const square_size = Math.min(this.Container.clientWidth, this.Container.clientHeight) / this.Size; //Math.min(this.App.view.width, this.App.view.height) / this.Size;
         
         for (let row = 0; row < this.Size; row++) {
             for (let col = 0; col < this.Size; col++) {
-                this.Squares[row][col].draw(this.App, square_size, row, col);
+                await this.Squares[row][col].draw(this.App, square_size, row, col);
             }
         }
     }

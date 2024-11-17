@@ -30,6 +30,12 @@ export class Square // Represents a square in the board
         this.Piece = piece;
     }
 
+    public onClick(callback: (position: [number, number]) => void): void {
+        this.Graphic.on("click", () => {
+            callback(this.Position); // Notify Board of the click
+        });
+    }
+
     public movePiece(col : number , row : number) {
 
         // row translation layer translates our array into chess notation.
@@ -54,14 +60,14 @@ export class Square // Represents a square in the board
     }
 
 
-    public draw( // Squares are responsible for drawing themselves. The board iterates over all squares calling this method.
+    public async draw( // Squares are responsible for drawing themselves. The board iterates over all squares calling this method.
         app: Application,
         square_size: number,
         row: number,
         col: number,
-    ): void {
+    ): Promise<void> {
       
-        this.Piece?.draw(app, square_size, row, col);
+        await this.Piece?.draw(app, square_size, row, col);
 
         // hover implementation
         // this.Graphic.on("pointermove", (event) => { 

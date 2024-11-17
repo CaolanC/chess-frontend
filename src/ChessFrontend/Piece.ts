@@ -9,21 +9,44 @@ enum PieceImagePaths {
 export class Piece {
 
     protected readonly image_path: string;
+    public readonly color: string;
+    protected _sprite!: Sprite;
+    protected _sprite_defined: boolean = false;
 
     constructor(piece : string) {
         this.image_path = '/images/' + piece + '.svg';
+        this.color = this._parseColor(piece);
+    }
+
+    protected _parseColor(piece: string) : string {
+        return piece.toUpperCase() == piece ? 'w' : 'b';
     }
 
     public getImagePath() : string {
         return this.image_path;
     }
 
+    public deleteSprite(app: Application) {
+        if (this._sprite) {
+            console.log("HERE SPRITE " + this._sprite)
+            app.stage.removeChild(this._sprite);
+            this._sprite.destroy(true);
+        }
+    }
+
     public async draw(app: Application, square_size: number, row: number, col: number) {
+
         try {
+
+            if (this._sprite) {
+                console.log("HERE SPRITE " + this._sprite)
+                app.stage.removeChild(this._sprite);
+                this._sprite.destroy(true);
+            }
+    
             // Load the texture asynchronously
             const texture = await Assets.load(this.image_path);
     
-            // Create a sprite from the loaded texture
             const sprite = new Sprite(texture);
     
             // Set the anchor point to the center
@@ -35,9 +58,12 @@ export class Piece {
 
             sprite.height = square_size;
             sprite.width = square_size;
-    
-            // Add the sprite to the application's stage
+            console.log("my sprite" + sprite)
+            this._sprite = sprite;
+            this._sprite_defined = true;
+            console.log("my_ sprite" + this._sprite)
             app.stage.addChild(sprite);
+    
         } catch (error) {
             console.error(`Failed to load texture from ${this.image_path}:`, error);
         }
