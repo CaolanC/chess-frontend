@@ -11,7 +11,9 @@ export class Piece {
     protected readonly image_path: string;
 
     constructor(piece : string) {
-        this.image_path = '/images/' + piece + '.svg';
+        this.image_path = '/images/' + piece + '.svg';  // This might seem odd, but the backend serves us a character representing each piece. 
+                                                        // I've just named each image to be equal to it's char representation e.g k.svg .
+                                                        // Otherwise we have to write a 12 entry switch statement and why bother.
     }
 
     public getImagePath() : string {

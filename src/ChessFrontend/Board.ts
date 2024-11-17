@@ -42,17 +42,13 @@ export class Board
                 
                 if (string != null) {
                     // 7 - row flips board upsidedown to render properly (for white side).
-                    let new_piece = this._charToPiece(string);
+                    let new_piece = new Piece(string);
                     this.Squares[row][7 - col].addPiece(new_piece);
                 }
 
             }
         }
         
-    }
-
-    protected _charToPiece(char: string) : Piece {
-        return new Piece(char);
     }
 
     protected _EmptyBoard(): Square[][] { // Returns a 2d array equal to the Board's size filled with null values
