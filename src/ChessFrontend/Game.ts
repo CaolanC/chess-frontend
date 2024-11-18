@@ -92,7 +92,7 @@ export class Game {
 
         let board_rep: BoardRep = await fetch(`${window.location.pathname}/board`).then(res => res.json());
         console.log(board_rep);
-        this.Board.PopulateBoard(board_rep);
+        await this.Board.PopulateBoard(board_rep);
 
         let possible_moves: boolean[][] = await this.pingMoves();
 
@@ -101,55 +101,78 @@ export class Game {
             console.log("finna flip");
         };
 
-        await this.Board.draw();
-
         for (;;) {
+
+            await this.Board.draw();
+
+
             status = await this.pingStatus();
             this.Board.turn = status.turn.color;
+            console.log(status);
             if (status.turn.color == info.color) {
-                let p_move = await this.Board.awaitMove();
-                let from = p_move['from'];
-                let to = p_move['to'];
-                let from_req = (ColumnTranslate[from[0]] + RowTranslate[from[1]]) as Square;
-                let to_req = (ColumnTranslate[to[0]] + RowTranslate[to[1]]) as Square;
-                let move: AccMove = {
-                    from: from_req,
-                    to: to_req
-                };
-                console.log(move);
-                console.log("what");
-                this.makeMove(move);
-                board_rep = await fetch(`${window.location.pathname}/board`).then(res => res.json());
+                while (true) {
+                    console.log("shadys back");
+                    let p_move = await this.Board.awaitMove();
+                    let from = p_move['from'];
+                    let to = p_move['to'];
+                   
+                    let from_req: Square;
+                    let to_req: Square;
+    
+                    if (info.color == "b") {    
+                        from_req = (ColumnTranslate[7 - from[0]] + RowTranslate[7 - from[1]]) as Square;
+                        to_req = (ColumnTranslate[7 - to[0]] + RowTranslate[7 - to[1]]) as Square;
+                    } else {
+                        from_req = (ColumnTranslate[from[0]] + RowTranslate[from[1]]) as Square;
+                        to_req = (ColumnTranslate[to[0]] + RowTranslate[to[1]]) as Square;  
+                    }
+    
+                    let move: AccMove = {
+                        from: from_req,
+                        to: to_req
+                    };
+                    console.log(move);
+                    console.log("what");
+                    let res = await this.makeMove(move);
+                    console.log("well we got out");
+                    if (res != undefined && res!.status != 400) {
+                        console.log("I AM BREAKING THE FUCK OUT");
+                        break;
+                    }
+                }
+            
             } else {
-                console.log("oh no");
                 await this.waitForMessage();
-                board_rep = await fetch(`${window.location.pathname}/board`).then(res => res.json());
             }
-
-            this.Board.PopulateBoard(board_rep);
+            console.log("out of ifel");
+            board_rep = await fetch(`${window.location.pathname}/board`).then(res => res.json());
+            await this.Board.PopulateBoard(board_rep);
 
             if (info.color == "w") { // TODO: Set-up logic, game loop incl moves, highlighting, castling, promotion, checkmate
                 this.Board.flip();
                 console.log("finna flip");
             };
-
-            await this.Board.draw();
         }
     }
 
-    public async makeMove(move: AccMove) {
-        let res =  await fetch(`${window.location.pathname}/move`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(move),
-        })
-        .then(res => res.json());
+    public async makeMove(move: AccMove) : Promise<Response | undefined> {
+        try {
+            let res =  await fetch(`${window.location.pathname}/move`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(move),
+            })
+            .then(res => res.json());
 
-        console.log(res);
+            console.log(res);
 
-        return res;
+            return res;
+        } catch (error) {
+            console.error(`Failed to get move`, error);
+            return undefined;
+        }
     }
 
     public async pingMoves() : Promise<boolean[][]> {

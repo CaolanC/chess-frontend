@@ -11,6 +11,10 @@ export class Square // Represents a square in the board
     protected DefaultColor: number; // Chessboard colours alternate, this represents what background colour this square has
     protected Graphic: Graphics = new Graphics();
     protected HoverColor: number = 0xAAAAAA;
+    protected row!: number;
+    protected col!: number;
+    protected size!: number;
+    protected app!: Application;
 
 
     constructor(
@@ -47,6 +51,14 @@ export class Square // Represents a square in the board
         })
     }
 
+    public setColor(color: number = 0xFF0000) {
+        this.Graphic.rect(this.size * this.row, this.size * this.col, this.size, this.size).fill(color);
+    }
+
+    public resetColor() {
+        this.Graphic.rect(this.size * this.row, this.size * this.col, this.size, this.size).fill(this.DefaultColor);
+    }
+
     public initDraw(
         app: Application,
         square_size: number,
@@ -54,11 +66,13 @@ export class Square // Represents a square in the board
         col: number,
     ) {
         this.Graphic.rect(square_size * row, square_size * col, square_size, square_size).fill(this.DefaultColor);
-        
+        this.size = square_size;
+        this.row = row;
+        this.col = col;
+        this.app = app;
         this.Graphic.eventMode = "static";
         app.stage.addChild(this.Graphic);
     }
-
 
     public async draw( // Squares are responsible for drawing themselves. The board iterates over all squares calling this method.
         app: Application,

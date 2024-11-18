@@ -2,7 +2,17 @@ import { Application, Assets, Graphics, Sprite, Loader } from 'pixi.js';
 import { Square } from './Square';
 import { Piece } from './Piece';
 import { Requests } from "./Game";
-import { Position } from "./Utils";
+import { Position, ColumnTranslate, RowTranslate } from "./Utils";
+
+
+type Color = "w" | "b";
+
+interface Info {
+    color: Color,
+    opponent: string | null
+}
+
+type StrSquare = 'a8' | 'b8' | 'c8' | 'd8' | 'e8' | 'f8' | 'g8' | 'h8' | 'a7' | 'b7' | 'c7' | 'd7' | 'e7' | 'f7' | 'g7' | 'h7' | 'a6' | 'b6' | 'c6' | 'd6' | 'e6' | 'f6' | 'g6' | 'h6' | 'a5' | 'b5' | 'c5' | 'd5' | 'e5' | 'f5' | 'g5' | 'h5' | 'a4' | 'b4' | 'c4' | 'd4' | 'e4' | 'f4' | 'g4' | 'h4' | 'a3' | 'b3' | 'c3' | 'd3' | 'e3' | 'f3' | 'g3' | 'h3' | 'a2' | 'b2' | 'c2' | 'd2' | 'e2' | 'f2' | 'g2' | 'h2' | 'a1' | 'b1' | 'c1' | 'd1' | 'e1' | 'f1' | 'g1' | 'h1';
 
 
 export class Board 
@@ -35,8 +45,8 @@ export class Board
         // [this.DefaultColors[0], this.DefaultColors[1]] = [this.DefaultColors[1], this.DefaultColors[0]];
     }
 
-    public PopulateBoard(pieces: (string | null)[][]) { 
-        this.clearBoard();
+    public async PopulateBoard(pieces: (string | null)[][]) { 
+        await this.clearBoard();
         for(let row = 0; row < this.Size; row++) {
             for(let col = 0; col < this.Size; col++) {
                 
@@ -64,14 +74,18 @@ export class Board
         });
     }
 
-    private handleSquareClick(position: [number, number]): void { // This is so much spaghetti, but tbh I'm so done with this.
+    private async handleSquareClick(position: [number, number]): Promise<void> { // This is so much spaghetti, but tbh I'm so done with this.
         if (this.clickPositions.length === 0) {
+            // let possible_moves: boolean[][] = await this.pingMoves();
+            // console.log(possible_moves);
             // First click: Select 'from_square'
+            this.highlightPossibleMoves(position);
             this.clickPositions.push(position);
             console.log("first click");
             console.log(this.clickPositions);
         } else if (this.clickPositions.length === 1) {
-            console.log(this.turn);
+            this.resetHighlights();
+            console.log(this.clickPositions);
             if (this.turn != this.Squares[position[0]][position[1]].Piece?.color) {
                 this.clickPositions.push(position);
                 console.log(this.clickPositions);
@@ -81,14 +95,90 @@ export class Board
                         from: this.clickPositions[0],
                         to: this.clickPositions[1],
                     });
+                    this.clickPositions = [];
                 }
             }
         }
             // this.moveResolver = null;
     }
 
-    public clearBoard(): void {
-        this.Squares.map(a => a.map(b => b.Piece?.deleteSprite(this.App)));
+    public rotateMatrix(matrix: boolean[][]) {
+        const n = matrix.length;
+        
+        for (let i = 0; i < n; i++) {
+            for (let j = i + 1; j < n; j++) {
+                let temp = matrix[i][j];
+                matrix[i][j] = matrix[j][i];
+                matrix[j][i] = temp;
+            }
+        }
+        
+        // Reverse each row (flip horizontally)
+        for (let i = 0; i < n; i++) {
+            matrix[i].reverse();
+        }
+    }
+    public resetHighlights() {
+        this.Squares.map(a => a.map(b => b.resetColor()));
+    }
+
+    public async highlightPossibleMoves(position: [number, number]) {
+        const info = await this.pingInfo();
+        if (info.color != this.turn) {
+            return;
+        }
+
+        let cord: StrSquare;
+
+        if (info.color == "b") {    
+            cord = (ColumnTranslate[7 - position[0]] + RowTranslate[7 - position[1]]) as StrSquare;
+        } else {
+            cord = (ColumnTranslate[position[0]] + RowTranslate[position[1]]) as StrSquare;
+        }
+
+        let move_array = await this.pingMoves(cord);
+        console.log(move_array);
+        // if (info.color == 'b') {
+        this.rotateMatrix(move_array);
+        this.rotateMatrix(move_array); // You can really tell I'm losing my mind here
+        this.rotateMatrix(move_array);
+
+        // move_array.map(a => a.reverse());
+        // move_array.reverse();
+        console.log("omg this is a move_Array: " + move_array)
+        let a = '';
+        for(let i = 0; i < this.Size; i++) {
+            for(let j = 0; j < this.Size; j++) {
+                if (move_array[i][j] == true) {
+                    a += 0;
+                    this.Squares[i][j].setColor();
+                } else {
+                    a += 1;
+                }
+            }
+            a += '\n';
+        }
+        console.log(a);
+    }
+
+    public async pingMoves(cord: string) : Promise<boolean[][]> {
+        // let moves: boolean[][] = 
+        let moves: boolean[][] = await fetch(`${window.location.pathname}/moves?square=${cord}`)
+        .then(res => res.json());
+        return moves;
+        // // .then(res => res.json());
+        // console.log(moves);
+    }
+
+    public async pingInfo() : Promise<Info> {
+        let info: Info = await fetch(`${window.location.pathname}/Info`)
+        .then(info => info.json());
+
+        return info;
+    }
+    
+    public async clearBoard(): Promise<void> {
+        this.Squares.map(a => a.map(async b => await b.Piece?.deleteSprite(this.App)));
     }
 
     // Update _EmptyBoard to register square clicks with Board

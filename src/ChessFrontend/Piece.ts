@@ -2,10 +2,6 @@ import { Board } from './Board';
 import { Position } from './Utils';
 import { Application, Graphics, roundPixelsBit, Sprite, HTMLText, Assets } from "pixi.js";
 
-enum PieceImagePaths {
-    WhitePawn = "/images/pawn.svg",
-}
-
 export class Piece {
 
     protected readonly image_path: string;
@@ -26,7 +22,7 @@ export class Piece {
         return this.image_path;
     }
 
-    public deleteSprite(app: Application) {
+    public async deleteSprite(app: Application) {
         if (this._sprite) {
             console.log("HERE SPRITE " + this._sprite)
             app.stage.removeChild(this._sprite);
